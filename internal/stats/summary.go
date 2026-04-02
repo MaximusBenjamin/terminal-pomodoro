@@ -24,18 +24,18 @@ func RenderSummary(today, week, allTime float64, width int) string {
 		Render(line)
 }
 
-// fmtDuration formats hours intelligently: shows minutes for small values.
+// fmtDuration formats hours: shows minutes when under 60m, hours otherwise.
 func fmtDuration(hours float64) string {
 	if hours == 0 {
 		return "0m"
 	}
-	if hours < 0.1 {
-		m := int(math.Round(hours * 60))
-		if m == 0 {
+	totalMin := int(math.Round(hours * 60))
+	if totalMin < 60 {
+		if totalMin == 0 {
 			s := int(math.Round(hours * 3600))
 			return fmt.Sprintf("%ds", s)
 		}
-		return fmt.Sprintf("%dm", m)
+		return fmt.Sprintf("%dm", totalMin)
 	}
 	return fmt.Sprintf("%.1fh", hours)
 }
