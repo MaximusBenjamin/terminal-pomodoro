@@ -1,0 +1,32 @@
+version: 2
+
+builds:
+  - binary: tpom
+    main: .
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    name_template: "tpom_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+brews:
+  - name: tpom
+    homepage: "https://github.com/MaximusBenjamin/terminal-pomodoro"
+    description: "A minimalist pomodoro timer for the terminal"
+    license: "MIT"
+    repository:
+      owner: maximus
+      name: homebrew-tap
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
