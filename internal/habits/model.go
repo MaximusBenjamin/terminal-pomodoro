@@ -7,8 +7,8 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/api"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/common"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/store"
 )
 
 // habitsLoadedMsg is sent after habits are loaded from the store.
@@ -23,7 +23,7 @@ var defaultColors = []string{
 
 // Model is the Bubble Tea sub-model for the habits view.
 type Model struct {
-	store      *store.Store
+	client     *api.Client
 	habits     []common.Habit
 	cursor     int
 	adding     bool
@@ -32,22 +32,23 @@ type Model struct {
 	width      int
 	height     int
 	selected   int // currently selected habit ID
+	lastErr    string
 }
 
-// New creates a new habits Model with initial data loaded from the store.
-func New(s *store.Store) Model {
+// New creates a new habits Model with initial data loaded from the API.
+func New(c *api.Client) Model {
 	ti := textinput.New()
 	ti.Placeholder = "habit name..."
 	ti.CharLimit = 40
 	ti.Width = 30
 
 	m := Model{
-		store: s,
-		input: ti,
+		client: c,
+		input:  ti,
 	}
 
 	// Eagerly load habits so we have data before Init runs.
-	if habits, err := s.ListHabits(); err == nil {
+	if habits, err := c.ListHabits(); err == nil {
 		m.habits = habits
 		if len(habits) > 0 {
 			m.selected = habits[0].ID
@@ -63,7 +64,7 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) loadHabits() tea.Msg {
-	habits, err := m.store.ListHabits()
+	habits, err := m.client.ListHabits()
 	if err != nil {
 		return habitsLoadedMsg{habits: nil}
 	}
@@ -108,7 +109,11 @@ func (m Model) updateAdding(msg tea.KeyMsg) (Model, tea.Cmd) {
 		name := strings.TrimSpace(m.input.Value())
 		if name != "" {
 			color := defaultColors[len(m.habits)%len(defaultColors)]
-			_, _ = m.store.AddHabit(name, color)
+			if _, err := m.client.AddHabit(name, color); err != nil {
+				m.lastErr = "Failed to add habit"
+			} else {
+				m.lastErr = ""
+			}
 		}
 		m.adding = false
 		m.input.Reset()
@@ -132,7 +137,11 @@ func (m Model) updateConfirming(msg tea.KeyMsg) (Model, tea.Cmd) {
 	case "y":
 		if len(m.habits) > 0 {
 			h := m.habits[m.cursor]
-			_ = m.store.DeleteHabit(h.ID)
+			if err := m.client.DeleteHabit(h.ID); err != nil {
+				m.lastErr = "Failed to delete habit"
+			} else {
+				m.lastErr = ""
+			}
 		}
 		m.confirming = false
 		return m, m.loadHabits
@@ -226,6 +235,11 @@ func (m Model) View() string {
 		b.WriteString(common.MutedStyle.Render("  New: "))
 		b.WriteString(m.input.View())
 		b.WriteString("\n")
+	}
+
+	if m.lastErr != "" {
+		b.WriteString("\n")
+		b.WriteString(common.OvertimeStyle.Render("  ⚠ " + m.lastErr))
 	}
 
 	b.WriteString("\n")

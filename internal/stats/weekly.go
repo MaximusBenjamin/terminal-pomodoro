@@ -5,10 +5,9 @@ import (
 	"math"
 	"sort"
 	"strings"
-
 	"github.com/charmbracelet/lipgloss"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/api"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/common"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/store"
 )
 
 const barMaxHeight = 8
@@ -20,11 +19,10 @@ const barWidth = 5
 const colWidth = 6
 
 // RenderWeeklyByHabit renders a stacked bar chart colored by habit, Mon-Sun.
-func RenderWeeklyByHabit(weekByHabit map[int]store.HabitWeekData, width int) string {
-	title := common.TitleStyle.Render("This Week ─ Per Category")
+func RenderWeeklyByHabit(weekByHabit map[int]api.HabitWeekData, width int) string {
 
 	if len(weekByHabit) == 0 {
-		return title + "\n" + common.MutedStyle.Render("  No data")
+		return common.MutedStyle.Render("  No data")
 	}
 
 	type habitInfo struct {
@@ -62,8 +60,6 @@ func RenderWeeklyByHabit(weekByHabit map[int]store.HabitWeekData, width int) str
 	}
 
 	var sb strings.Builder
-	sb.WriteString(title)
-	sb.WriteString("\n\n")
 
 	yStep := maxVal / float64(barMaxHeight)
 
@@ -73,7 +69,6 @@ func RenderWeeklyByHabit(weekByHabit map[int]store.HabitWeekData, width int) str
 
 		for day := 0; day < 7; day++ {
 			if totals[day] >= threshold {
-				// Find which habit owns this segment
 				accumulated := 0.0
 				rendered := false
 				for _, h := range habits {
@@ -87,22 +82,6 @@ func RenderWeeklyByHabit(weekByHabit map[int]store.HabitWeekData, width int) str
 				}
 				if !rendered {
 					sb.WriteString(common.AccentStyle.Render(strings.Repeat("█", barWidth)))
-				}
-			} else if row == 1 && totals[day] > 0 {
-				// Show a half-block so small values still touch the axis
-				accumulated := 0.0
-				rendered := false
-				for _, h := range habits {
-					accumulated += h.daily[day]
-					if h.daily[day] > 0 {
-						style := lipgloss.NewStyle().Foreground(lipgloss.Color(h.color))
-						sb.WriteString(style.Render(strings.Repeat("▄", barWidth)))
-						rendered = true
-						break
-					}
-				}
-				if !rendered {
-					sb.WriteString(common.AccentStyle.Render(strings.Repeat("▄", barWidth)))
 				}
 			} else {
 				sb.WriteString(strings.Repeat(" ", barWidth))
@@ -167,6 +146,57 @@ func writeValues(sb *strings.Builder, values []float64) {
 		}
 	}
 	sb.WriteString("\n")
+}
+
+// RenderHabitTracker renders a weekly habit completion grid.
+// Each row is a habit, each column is Mon-Sun. A box is filled if >= 5 min logged.
+func RenderHabitTracker(weekByHabit map[int]api.HabitWeekData) string {
+	if len(weekByHabit) == 0 {
+		return common.MutedStyle.Render("  No data")
+	}
+
+	type habitInfo struct {
+		name  string
+		color string
+		daily [7]float64
+	}
+	var habits []habitInfo
+	for _, hw := range weekByHabit {
+		habits = append(habits, habitInfo{
+			name:  hw.HabitName,
+			color: hw.Color,
+			daily: hw.Daily,
+		})
+	}
+	sort.Slice(habits, func(i, j int) bool {
+		return habits[i].name < habits[j].name
+	})
+
+	const threshold = 5.0 / 60.0 // 5 minutes in hours
+
+	var sb strings.Builder
+
+	// Day headers (no name column — aligned with Today panel)
+	for _, label := range weekLabels {
+		sb.WriteString(common.MutedStyle.Render(fmt.Sprintf("%-4s", label)))
+	}
+	sb.WriteString("\n")
+
+	// One row per habit (no name — matches Today panel order)
+	for _, h := range habits {
+		for day := 0; day < 7; day++ {
+			if h.daily[day] >= threshold {
+				style := lipgloss.NewStyle().Foreground(lipgloss.Color(h.color))
+				sb.WriteString(style.Render("██"))
+			} else {
+				sb.WriteString(common.MutedStyle.Render("░░"))
+			}
+			sb.WriteString("  ")
+		}
+		sb.WriteString("\n")
+	}
+
+	return strings.TrimRight(sb.String(), "\n")
 }
 
 func formatHours(h float64) string {

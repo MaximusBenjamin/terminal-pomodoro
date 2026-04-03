@@ -8,8 +8,8 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/api"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/common"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/store"
 )
 
 type viewMode int
@@ -22,14 +22,15 @@ const (
 )
 
 type sessionsLoadedMsg struct {
-	sessions []store.SessionWithHabit
+	sessions []api.SessionWithHabit
 	habits   []common.Habit
+	err      string
 }
 
 // Model is the Bubble Tea sub-model for the log view.
 type Model struct {
-	store    *store.Store
-	sessions []store.SessionWithHabit
+	client   *api.Client
+	sessions []api.SessionWithHabit
 	habits   []common.Habit
 	cursor   int
 	mode     viewMode
@@ -42,15 +43,15 @@ type Model struct {
 }
 
 // New creates a new log model.
-func New(s *store.Store) Model {
+func New(c *api.Client) Model {
 	ti := textinput.New()
 	ti.Placeholder = "e.g. 30m math, 1pm-2pm programming yesterday"
 	ti.CharLimit = 80
 	ti.Width = 50
 
 	return Model{
-		store: s,
-		input: ti,
+		client: c,
+		input:  ti,
 	}
 }
 
@@ -60,8 +61,14 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) loadData() tea.Msg {
-	sessions, _ := m.store.ListSessionsWithHabits(100)
-	habits, _ := m.store.ListHabits()
+	sessions, err := m.client.ListSessionsWithHabits(100)
+	if err != nil {
+		return sessionsLoadedMsg{err: "Failed to load sessions"}
+	}
+	habits, err := m.client.ListHabits()
+	if err != nil {
+		return sessionsLoadedMsg{sessions: sessions, err: "Failed to load habits"}
+	}
 	return sessionsLoadedMsg{sessions: sessions, habits: habits}
 }
 
@@ -74,6 +81,11 @@ func (m Model) IsEditing() bool {
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case sessionsLoadedMsg:
+		if msg.err != "" {
+			m.parseErr = msg.err
+		} else {
+			m.parseErr = ""
+		}
 		m.sessions = msg.sessions
 		m.habits = msg.habits
 		if m.cursor >= len(m.sessions) {
@@ -144,10 +156,15 @@ func (m Model) updateInput(msg tea.KeyMsg, isEdit bool) (Model, tea.Cmd) {
 			return m, nil
 		}
 
+		var saveErr error
 		if isEdit {
-			_ = m.store.UpdateSession(m.editID, parsed.HabitID, parsed.StartTime, parsed.EndTime, parsed.DurationSecs)
+			saveErr = m.client.UpdateSession(m.editID, parsed.HabitID, parsed.StartTime, parsed.EndTime, parsed.DurationSecs)
 		} else {
-			_ = m.store.CreateManualSession(parsed.HabitID, parsed.StartTime, parsed.EndTime, parsed.DurationSecs)
+			saveErr = m.client.CreateManualSession(parsed.HabitID, parsed.StartTime, parsed.EndTime, parsed.DurationSecs)
+		}
+		if saveErr != nil {
+			m.parseErr = "Failed to save session"
+			return m, nil
 		}
 
 		m.mode = modeNormal
@@ -173,7 +190,9 @@ func (m Model) updateConfirmDelete(msg tea.KeyMsg) (Model, tea.Cmd) {
 	switch msg.String() {
 	case "y":
 		if len(m.sessions) > 0 {
-			_ = m.store.DeleteSession(m.sessions[m.cursor].ID)
+			if err := m.client.DeleteSession(m.sessions[m.cursor].ID); err != nil {
+				m.parseErr = "Failed to delete session"
+			}
 		}
 		m.mode = modeNormal
 		return m, func() tea.Msg { return common.StatsRefreshMsg{} }

@@ -1,6 +1,6 @@
 # tpom - Terminal Pomodoro
 
-A minimalist pomodoro timer for the terminal, built with Go. Lazygit-style TUI with habit tracking, heatmaps, and statistics.
+A minimalist pomodoro timer for the terminal, built with Go. Lazygit-style TUI with habit tracking, heatmaps, and statistics. Cloud sync via Supabase with an iOS companion app.
 
 ![Go](https://img.shields.io/badge/Go-1.26-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
@@ -10,25 +10,47 @@ A minimalist pomodoro timer for the terminal, built with Go. Lazygit-style TUI w
 - **Habits** - Track time across categories (programming, mathematics, finance, etc.)
 - **Stats** - Year-long heatmap, weekly per-category bar chart, today/week/all-time totals
 - **Log** - View, add, edit, and delete sessions with natural language input
+- **Cloud Sync** - Supabase backend with real-time sync across devices
+- **iOS App** - Companion app with WidgetKit widgets for home screen
 - **Dark theme** - Tokyo Night inspired color palette
 
 ## Install
 
-```bash
-# From source
-go install github.com/MaximusBenjamin/terminal-pomodoro@latest
+### Homebrew (recommended)
 
-# Or clone and build
+```bash
+brew install MaximusBenjamin/tap/tpom
+```
+
+### From source
+
+```bash
+go install github.com/MaximusBenjamin/terminal-pomodoro@latest
+```
+
+### Clone and build
+
+```bash
 git clone https://github.com/MaximusBenjamin/terminal-pomodoro.git
 cd terminal-pomodoro
 go build -o tpom .
 ```
 
-## Usage
+## Getting Started
 
 ```bash
-tpom
+tpom register    # Create a new account
+tpom login       # Sign in (prompts for email and password)
+tpom             # Launch the TUI
 ```
+
+To sign out:
+
+```bash
+tpom logout
+```
+
+## Usage
 
 ### Navigation
 
@@ -52,6 +74,8 @@ tpom
 | Key | Action |
 |-----|--------|
 | `j` / `k` | Scroll |
+| `←` / `→` | Previous / next week |
+| `0` | This week |
 
 ### Habits
 
@@ -88,9 +112,19 @@ from 9am to 11am programming monday
 
 Habit names support prefix matching: `math` -> `mathematics`, `prog` -> `programming`.
 
+## Migrating from Local SQLite
+
+If you previously used tpom with local-only storage, you can migrate your data:
+
+```bash
+tpom migrate
+```
+
+This uploads your local sessions and habits to the cloud. Safe to run multiple times (skips duplicates).
+
 ## Data
 
-All data is stored in SQLite at `~/.pomo/pomo.db`.
+All data is synced via Supabase. Local auth credentials are stored at `~/.pomo/auth.json`.
 
 ## License
 

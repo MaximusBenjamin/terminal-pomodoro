@@ -5,11 +5,11 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/api"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/common"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/habits"
 	logview "github.com/MaximusBenjamin/terminal-pomodoro/internal/log"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/stats"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/store"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/timer"
 )
 
@@ -22,18 +22,18 @@ type Model struct {
 	stats     stats.Model
 	habits    habits.Model
 	log       logview.Model
-	store     *store.Store
+	client    *api.Client
 	width     int
 	height    int
 	ready     bool
 }
 
 // New creates the top-level application model with all sub-models.
-func New(s *store.Store) Model {
-	h := habits.New(s)
-	t := timer.New(s)
-	st := stats.New(s)
-	l := logview.New(s)
+func New(c *api.Client) Model {
+	h := habits.New(c)
+	t := timer.New(c)
+	st := stats.New(c)
+	l := logview.New(c)
 
 	// Set the first habit as the default for the timer.
 	sel := h.SelectedHabit()
@@ -47,7 +47,7 @@ func New(s *store.Store) Model {
 		stats:     st,
 		habits:    h,
 		log:       l,
-		store:     s,
+		client:    c,
 	}
 }
 

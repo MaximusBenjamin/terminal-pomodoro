@@ -5,8 +5,8 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/api"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/app"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/store"
 	"github.com/spf13/cobra"
 )
 
@@ -22,13 +22,19 @@ var rootCmd = &cobra.Command{
 	Use:   "tpom",
 	Short: "A minimalist pomodoro timer for the terminal",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		s, err := store.New()
-		if err != nil {
-			return fmt.Errorf("initializing store: %w", err)
+		if !api.IsLoggedIn() {
+			fmt.Println("Please run: tpom login")
+			fmt.Println("Or register: tpom register")
+			return nil
 		}
-		defer s.Close()
 
-		m := app.New(s)
+		c, err := api.NewClient()
+		if err != nil {
+			return fmt.Errorf("initializing API client: %w", err)
+		}
+		defer c.Close()
+
+		m := app.New(c)
 		p := tea.NewProgram(m, tea.WithAltScreen())
 		_, err = p.Run()
 		return err

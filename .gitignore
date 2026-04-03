@@ -2,3 +2,9 @@ tpom
 pomo
 *.db
 dist/
+.env
+.env.*
+.pomo/
+*.xcuserstate
+xcuserdata/
+DerivedData/

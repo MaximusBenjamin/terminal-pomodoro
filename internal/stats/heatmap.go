@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/api"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/common"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/store"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/theme"
 )
 
@@ -29,7 +29,7 @@ func intensityLevel(hours float64) int {
 // RenderHeatmap renders a GitHub-style heatmap for the current year,
 // split into two rows: Jan-Jun on top, Jul-Dec on bottom.
 // Empty days show a dim box so the grid structure is always visible.
-func RenderHeatmap(data []store.DailyHours, width int) string {
+func RenderHeatmap(data []api.DailyHours, width int) string {
 	title := common.TitleStyle.Render("Activity")
 
 	// Build lookup map.

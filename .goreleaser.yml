@@ -22,7 +22,7 @@ brews:
     description: "A minimalist pomodoro timer for the terminal"
     license: "MIT"
     repository:
-      owner: maximus
+      owner: MaximusBenjamin
       name: homebrew-tap
 
 checksum:

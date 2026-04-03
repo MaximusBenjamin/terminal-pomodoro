@@ -17,22 +17,28 @@ type HabitBreakdown struct {
 	Hours     float64
 }
 
-// TodayHours returns total hours studied today.
+// dayBoundaryOffset is subtracted from timestamps before taking the date,
+// so that sessions before 4 AM count as the previous day.
+const dayBoundaryOffset = "-4 hours"
+
+// TodayHours returns total hours studied today (day starts at 4 AM).
 func (s *Store) TodayHours() (float64, error) {
 	var seconds float64
 	err := s.db.QueryRow(
 		`SELECT COALESCE(SUM(actual_seconds), 0) FROM sessions
-		 WHERE date(start_time) = date('now', 'localtime')`,
+		 WHERE date(start_time, '-4 hours') = date('now', '-4 hours')`,
 	).Scan(&seconds)
 	return seconds / 3600.0, err
 }
 
-// WeekHours returns total hours studied this week (Mon-Sun).
+// WeekHours returns total hours studied this week (Mon-Sun, day starts at 4 AM).
 func (s *Store) WeekHours() (float64, error) {
+	monday := MondayOfWeek(0)
 	var seconds float64
 	err := s.db.QueryRow(
 		`SELECT COALESCE(SUM(actual_seconds), 0) FROM sessions
-		 WHERE start_time >= date('now', 'localtime', 'weekday 1', '-7 days')`,
+		 WHERE date(start_time, '-4 hours') >= ?`,
+		monday.Format("2006-01-02"),
 	).Scan(&seconds)
 	return seconds / 3600, err
 }
@@ -46,12 +52,12 @@ func (s *Store) AllTimeHours() (float64, error) {
 	return seconds / 3600, err
 }
 
-// DailyHoursRange returns hours per day for the last N days.
+// DailyHoursRange returns hours per day for the last N days (day starts at 4 AM).
 func (s *Store) DailyHoursRange(days int) ([]DailyHours, error) {
 	rows, err := s.db.Query(
-		`SELECT date(start_time, 'localtime') as d, SUM(actual_seconds) / 3600.0
+		`SELECT date(start_time, '-4 hours') as d, SUM(actual_seconds) / 3600.0
 		 FROM sessions
-		 WHERE start_time >= date('now', 'localtime', ?)
+		 WHERE date(start_time, '-4 hours') >= date('now', '-4 hours', ?)
 		 GROUP BY d
 		 ORDER BY d`,
 		"-"+strconv.Itoa(days)+" days",
@@ -75,9 +81,9 @@ func (s *Store) DailyHoursRange(days int) ([]DailyHours, error) {
 		return nil, err
 	}
 
-	// Fill in all days
+	// Fill in all days (using effective date: shifted by -4h)
 	now := time.Now().Local()
-	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	today := EffectiveDate(now)
 	result := make([]DailyHours, days)
 	for i := 0; i < days; i++ {
 		d := today.AddDate(0, 0, -(days-1-i))
@@ -90,28 +96,37 @@ func (s *Store) DailyHoursRange(days int) ([]DailyHours, error) {
 	return result, nil
 }
 
-// mondayOfWeek returns the Monday of the current ISO week.
-func mondayOfWeek() time.Time {
+// EffectiveDate returns the "logical" date for a given time, where the day
+// boundary is at 4 AM instead of midnight. A session at 2 AM on April 4 is
+// considered to belong to April 3.
+func EffectiveDate(t time.Time) time.Time {
+	shifted := t.Add(-4 * time.Hour)
+	return time.Date(shifted.Year(), shifted.Month(), shifted.Day(), 0, 0, 0, 0, shifted.Location())
+}
+
+// MondayOfWeek returns the Monday of the current ISO week offset by n weeks.
+// 0 = current week, -1 = last week, etc. Uses the 4 AM day boundary.
+func MondayOfWeek(offset int) time.Time {
 	now := time.Now().Local()
-	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	today := EffectiveDate(now)
 	wd := today.Weekday()
 	daysSinceMonday := int(wd) - 1
 	if daysSinceMonday < 0 {
 		daysSinceMonday = 6 // Sunday
 	}
-	return today.AddDate(0, 0, -daysSinceMonday)
+	return today.AddDate(0, 0, -daysSinceMonday+(offset*7))
 }
 
-// WeekDailyHours returns hours for Mon-Sun of the current week.
-// Index 0=Mon, 1=Tue, ..., 6=Sun.
-func (s *Store) WeekDailyHours() ([]float64, error) {
-	monday := mondayOfWeek()
+// WeekDailyHours returns hours for Mon-Sun of the given week offset.
+// offset 0 = current week, -1 = last week, etc. Index 0=Mon, 6=Sun.
+func (s *Store) WeekDailyHours(offset int) ([]float64, error) {
+	monday := MondayOfWeek(offset)
 	sunday := monday.AddDate(0, 0, 6)
 
 	rows, err := s.db.Query(
-		`SELECT date(start_time, 'localtime') as d, SUM(actual_seconds) / 3600.0
+		`SELECT date(start_time, '-4 hours') as d, SUM(actual_seconds) / 3600.0
 		 FROM sessions
-		 WHERE date(start_time, 'localtime') >= ? AND date(start_time, 'localtime') <= ?
+		 WHERE date(start_time, '-4 hours') >= ? AND date(start_time, '-4 hours') <= ?
 		 GROUP BY d ORDER BY d`,
 		monday.Format("2006-01-02"), sunday.Format("2006-01-02"),
 	)
@@ -144,7 +159,7 @@ func (s *Store) TodayHoursByHabit() ([]HabitBreakdown, error) {
 		`SELECT h.id, h.name, h.color, COALESCE(SUM(s.actual_seconds), 0) / 3600.0
 		 FROM habits h
 		 LEFT JOIN sessions s ON s.habit_id = h.id
-		   AND date(s.start_time, 'localtime') = date('now', 'localtime')
+		   AND date(s.start_time, '-4 hours') = date('now', '-4 hours')
 		 WHERE h.archived = 0
 		 GROUP BY h.id
 		 ORDER BY h.name`,
@@ -165,19 +180,19 @@ func (s *Store) TodayHoursByHabit() ([]HabitBreakdown, error) {
 	return result, rows.Err()
 }
 
-// WeekDailyByHabit returns per-habit hours for Mon-Sun of the current week.
-// Returns a map of habit_id -> HabitWeekData with Daily[0]=Mon, Daily[6]=Sun.
-func (s *Store) WeekDailyByHabit() (map[int]HabitWeekData, error) {
-	monday := mondayOfWeek()
+// WeekDailyByHabit returns per-habit hours for Mon-Sun of the given week offset.
+// offset 0 = current week, -1 = last week, etc.
+func (s *Store) WeekDailyByHabit(offset int) (map[int]HabitWeekData, error) {
+	monday := MondayOfWeek(offset)
 	sunday := monday.AddDate(0, 0, 6)
 
 	rows, err := s.db.Query(
-		`SELECT h.id, h.name, h.color, date(s.start_time, 'localtime') as d,
+		`SELECT h.id, h.name, h.color, date(s.start_time, '-4 hours') as d,
 		        COALESCE(SUM(s.actual_seconds), 0) / 3600.0
 		 FROM habits h
 		 LEFT JOIN sessions s ON s.habit_id = h.id
-		   AND date(s.start_time, 'localtime') >= ?
-		   AND date(s.start_time, 'localtime') <= ?
+		   AND date(s.start_time, '-4 hours') >= ?
+		   AND date(s.start_time, '-4 hours') <= ?
 		 WHERE h.archived = 0
 		 GROUP BY h.id, d
 		 ORDER BY h.name, d`,
@@ -229,7 +244,7 @@ func (s *Store) HabitBreakdownForPeriod(days int) ([]HabitBreakdown, error) {
 		`SELECT h.id, h.name, h.color, COALESCE(SUM(s.actual_seconds), 0) / 3600.0
 		 FROM habits h
 		 LEFT JOIN sessions s ON s.habit_id = h.id
-		   AND s.start_time >= date('now', 'localtime', ?)
+		   AND date(s.start_time, '-4 hours') >= date('now', '-4 hours', ?)
 		 WHERE h.archived = 0
 		 GROUP BY h.id
 		 HAVING SUM(s.actual_seconds) > 0

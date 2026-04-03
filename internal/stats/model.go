@@ -6,8 +6,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/api"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/common"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/store"
 )
 
 // dataLoadedMsg carries all stats data after loading.
@@ -15,32 +15,35 @@ type dataLoadedMsg struct {
 	today        float64
 	week         float64
 	allTime      float64
-	todayByHabit []store.HabitBreakdown
-	dailyHours   []store.DailyHours
-	weekByHabit  map[int]store.HabitWeekData
+	todayByHabit []api.HabitBreakdown
+	dailyHours   []api.DailyHours
+	weekByHabit  map[int]api.HabitWeekData
+	loadErr      string
 }
 
 // Model is the stats sub-model.
 type Model struct {
-	store        *store.Store
+	client       *api.Client
 	today        float64
 	week         float64
 	allTime      float64
-	todayByHabit []store.HabitBreakdown
-	dailyHours   []store.DailyHours
-	weekByHabit  map[int]store.HabitWeekData
+	todayByHabit []api.HabitBreakdown
+	dailyHours   []api.DailyHours
+	weekByHabit  map[int]api.HabitWeekData
 	width        int
 	height       int
-	loaded       bool
+	loaded         bool
+	loadErr        string
 	scroll         int // vertical scroll offset
 	contentHeight  int // total rendered lines (for clamping)
+	weekOffset     int // 0 = current week, -1 = last week, etc.
 }
 
 // New creates a new stats model.
-func New(s *store.Store) Model {
+func New(c *api.Client) Model {
 	return Model{
-		store: s,
-		width: 80,
+		client: c,
+		width:  80,
 	}
 }
 
@@ -60,6 +63,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.dailyHours = msg.dailyHours
 		m.weekByHabit = msg.weekByHabit
 		m.loaded = true
+		m.loadErr = msg.loadErr
 		m.contentHeight = m.computeContentHeight()
 	case common.StatsRefreshMsg:
 		return m, m.loadData()
@@ -82,6 +86,17 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			if m.scroll < 0 {
 				m.scroll = 0
 			}
+		case "left":
+			m.weekOffset--
+			return m, m.loadData()
+		case "right":
+			if m.weekOffset < 0 {
+				m.weekOffset++
+				return m, m.loadData()
+			}
+		case "0":
+			m.weekOffset = 0
+			return m, m.loadData()
 		}
 	}
 	return m, nil
@@ -92,6 +107,11 @@ func (m Model) View() string {
 	if !m.loaded {
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
 			common.MutedStyle.Render("Loading stats..."))
+	}
+
+	if m.loadErr != "" {
+		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
+			common.OvertimeStyle.Render("⚠ "+m.loadErr))
 	}
 
 	center := func(s string) string {
@@ -174,10 +194,32 @@ func (m Model) renderContent() string {
 	var sections []string
 	sections = append(sections, RenderSummary(m.today, m.week, m.allTime, m.width))
 	sections = append(sections, "")
-	sections = append(sections, center(m.renderTodayByHabit()))
+
+	// Today breakdown + Habit Tracker side by side
+	todayPanel := m.renderTodayByHabit()
+	trackerPanel := RenderHabitTracker(m.weekByHabit)
+	gap := "      "
+	sideBySide := lipgloss.JoinHorizontal(lipgloss.Top, todayPanel, gap, trackerPanel)
+	sections = append(sections, center(sideBySide))
 	sections = append(sections, "")
+
 	sections = append(sections, center(RenderHeatmap(m.dailyHours, m.width)))
+
+	// Week date range header
+	monday := api.MondayOfWeek(m.weekOffset)
+	sunday := monday.AddDate(0, 0, 6)
+	weekLabel := monday.Format("Jan 2") + " – " + sunday.Format("Jan 2, 2006")
+	if m.weekOffset == 0 {
+		weekLabel += "  (this week)"
+	}
+	sections = append(sections, center(common.TitleStyle.Render(weekLabel)))
 	sections = append(sections, center(RenderWeeklyByHabit(m.weekByHabit, m.width)))
+	sections = append(sections, "")
+
+	// Navigation hint
+	hint := common.HelpKeyStyle.Render("←/→") + " " + common.HelpDescStyle.Render("prev/next week") +
+		"  " + common.HelpKeyStyle.Render("0") + " " + common.HelpDescStyle.Render("this week")
+	sections = append(sections, center(hint))
 
 	return strings.Join(sections, "\n")
 }
@@ -185,13 +227,18 @@ func (m Model) renderContent() string {
 func (m Model) loadData() tea.Cmd {
 	return func() tea.Msg {
 		var d dataLoadedMsg
+		var err error
 
-		d.today, _ = m.store.TodayHours()
-		d.week, _ = m.store.WeekHours()
-		d.allTime, _ = m.store.AllTimeHours()
-		d.todayByHabit, _ = m.store.TodayHoursByHabit()
-		d.dailyHours, _ = m.store.DailyHoursRange(365)
-		d.weekByHabit, _ = m.store.WeekDailyByHabit()
+		d.today, err = m.client.TodayHours()
+		if err != nil {
+			d.loadErr = "Failed to load stats"
+			return d
+		}
+		d.week, _ = m.client.WeekHours()
+		d.allTime, _ = m.client.AllTimeHours()
+		d.todayByHabit, _ = m.client.TodayHoursByHabit()
+		d.dailyHours, _ = m.client.DailyHoursRange(365)
+		d.weekByHabit, _ = m.client.WeekDailyByHabit(m.weekOffset)
 
 		return d
 	}

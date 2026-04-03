@@ -3,13 +3,14 @@ package timer
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/theme"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/api"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/common"
-	"github.com/MaximusBenjamin/terminal-pomodoro/internal/store"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/theme"
 )
 
 // TimerState represents the current state of the timer.
@@ -50,17 +51,18 @@ type Model struct {
 	habit          common.Habit
 	habits         []common.Habit // all available habits
 	habitIdx       int            // current index in habits slice
-	store          *store.Store
+	client         *api.Client
 	width, height  int
 	progress       progress.Model
 
 	// Confirming state: stash values while waiting for y/x
 	confirmIsReset   bool // true = reset confirmation, false = stop confirmation
 	stashedCompleted bool
+	lastErr          string
 }
 
 // New creates a new timer model with default settings.
-func New(s *store.Store) Model {
+func New(c *api.Client) Model {
 	p := progress.New(
 		progress.WithGradient(string(theme.ColorAccent), string(theme.ColorMagenta)),
 		progress.WithoutPercentage(),
@@ -69,11 +71,11 @@ func New(s *store.Store) Model {
 		state:          Idle,
 		plannedMinutes: 25,
 		remaining:      25 * 60,
-		store:          s,
+		client:         c,
 		progress:       p,
 	}
 	// Load habits so j/k cycling works on the timer page
-	if habits, err := s.ListHabits(); err == nil && len(habits) > 0 {
+	if habits, err := c.ListHabits(); err == nil && len(habits) > 0 {
 		m.habits = habits
 		m.habit = habits[0]
 		m.habitIdx = 0
@@ -163,7 +165,11 @@ func (m Model) handleConfirm(msg tea.KeyMsg) (Model, tea.Cmd) {
 		overtime := m.overtime
 		planned := m.plannedMinutes
 
-		_ = m.store.CreateSession(habitID, planned, elapsed, overtime, completed)
+		if err := m.client.CreateSession(habitID, planned, elapsed, overtime, completed); err != nil {
+			m.lastErr = "Failed to save session"
+		} else {
+			m.lastErr = ""
+		}
 
 		endMsg := common.SessionEndMsg{
 			HabitID:         habitID,
@@ -255,8 +261,8 @@ func (m Model) handleTick() (Model, tea.Cmd) {
 		if m.remaining <= 0 {
 			m.remaining = 0
 			m.state = Overtime
-			// Bell character to notify user
-			fmt.Print("\a")
+			m.overtime++
+			return m, tea.Batch(tickCmd(), playBells())
 		}
 	}
 
@@ -267,6 +273,18 @@ func (m Model) handleTick() (Model, tea.Cmd) {
 	return m, tickCmd()
 }
 
+func playBells() tea.Cmd {
+	return func() tea.Msg {
+		for i := 0; i < 3; i++ {
+			fmt.Print("\a")
+			if i < 2 {
+				time.Sleep(200 * time.Millisecond)
+			}
+		}
+		return nil
+	}
+}
+
 // SetHabit sets the current habit for the timer.
 func (m *Model) SetHabit(h common.Habit) {
 	m.setHabitByID(h.ID)
@@ -274,7 +292,7 @@ func (m *Model) SetHabit(h common.Habit) {
 
 // RefreshHabits reloads the habit list from the store.
 func (m *Model) RefreshHabits() {
-	if habits, err := m.store.ListHabits(); err == nil {
+	if habits, err := m.client.ListHabits(); err == nil {
 		m.habits = habits
 		// Keep current selection if still valid
 		found := false
@@ -327,6 +345,11 @@ func (m Model) View() string {
 	// Status
 	statusLine := m.renderStatus()
 	sections = append(sections, statusLine)
+
+	// Error
+	if m.lastErr != "" {
+		sections = append(sections, common.OvertimeStyle.Render("⚠ "+m.lastErr))
+	}
 
 	// Spacer
 	sections = append(sections, "")
