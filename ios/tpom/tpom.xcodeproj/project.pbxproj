@@ -1,0 +1,574 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		125C4535B648BE8A5C052AF0 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508B96C7D83BE60463680520 /* Theme.swift */; };
+		180BEE06D06F940799818328 /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050DA365B794B019D01A868F /* SupabaseClient.swift */; };
+		295DAE38EEEF92E46B713A0F /* tpomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7A860BFE5EDAB4CDD1CBF7 /* tpomApp.swift */; };
+		3BC8923E02961C725C97C2A6 /* SummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5387384AA19E66119477FD2B /* SummaryCard.swift */; };
+		3D1243416404BD8D67F509CD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2EDFFF22E955DB37AB3FB2 /* ContentView.swift */; };
+		46E3129A082C723DFF3453D0 /* SummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499C7407A60E555D92A482F4 /* SummaryWidget.swift */; };
+		5FB92C76FC4F5575298674AD /* WeeklyChartWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB3D490F80440277F358ED6 /* WeeklyChartWidget.swift */; };
+		69406CADFC3FE128CB82CB3D /* HabitsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6910B2A0F3BF75C196E8E500 /* HabitsListView.swift */; };
+		73064914EAD0E1FB0EE3495E /* HeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63588C2E513B1A249B8AC7A1 /* HeatmapView.swift */; };
+		74722EE307F39220171DF804 /* WidgetDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905C43054FEE33EC1DED96E2 /* WidgetDataStore.swift */; };
+		75EB1672CC324D15F23167CB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBCB6DB5C15DC634820E80B /* Models.swift */; };
+		78FA69EE809A53CE4062DC12 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6B2CE81F0FABDB25B9E46F /* AuthView.swift */; };
+		7A3D0F23AE6003B9DF63B16A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 494E189092D4E1A5538B75D4 /* Assets.xcassets */; };
+		8B54DD8DA1EE1D23B0F7CC3A /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = A56BE729F6038469EA2D44ED /* Supabase */; };
+		949A2C8EBF6AC9D3E5FAE9D0 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17B399A8FDF12CE32DFC4D1 /* StatsView.swift */; };
+		99F065EF162F13CEF427E7E0 /* WeeklyHabitWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5907ACC9148C60D51AF6C5F3 /* WeeklyHabitWidget.swift */; };
+		A36D3DC19DD307C5B27E36AF /* WeeklyChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086A8A16DC8532C8DA11B16 /* WeeklyChartView.swift */; };
+		B57AC81CD384653EA0F98071 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EC06A008724E0666348668 /* TimerView.swift */; };
+		CD3129FC2AEDF90586232A96 /* HeatmapWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13CB9F30605F4B10CF7ECF69 /* HeatmapWidget.swift */; };
+		D90A45C3A720EC0555C38CF9 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBCB6DB5C15DC634820E80B /* Models.swift */; };
+		E7ED8C8DBC198D6D81778011 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508B96C7D83BE60463680520 /* Theme.swift */; };
+		E9574F77829201AAA6C80E51 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FAB94349C4A92DE0CEAFA4 /* DataService.swift */; };
+		F3FB39145F2631E43EBCEC1C /* SessionFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 756AE8CB9F0FAD005F1A8391 /* SessionFormView.swift */; };
+		F482FE6ED3A1A7ACAF389750 /* WidgetDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905C43054FEE33EC1DED96E2 /* WidgetDataStore.swift */; };
+		F4CD18697C270ED8ABB9935E /* tpomWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E44763E712B274DF11411538 /* tpomWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F6E71E940627C56A00262BEB /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B7EF1746362D847F44FD14 /* LogView.swift */; };
+		FFA3A9D09BC7BBF49A1A435F /* tpomWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F98232A6376ADBDC6A6B9E /* tpomWidgets.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AEDCFFA5DF9B17C15D7CCAE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1FE8E1D5631E4B7956371250 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A71EC070476DE99C45694625;
+			remoteInfo = tpomWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D3F3890510CFAACCEF4098E5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F4CD18697C270ED8ABB9935E /* tpomWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		050DA365B794B019D01A868F /* SupabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
+		0CB5C34452F19896B81AFE42 /* tpomWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tpomWidgets.entitlements; sourceTree = "<group>"; };
+		13CB9F30605F4B10CF7ECF69 /* HeatmapWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapWidget.swift; sourceTree = "<group>"; };
+		2EBCB6DB5C15DC634820E80B /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		36B7EF1746362D847F44FD14 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+		41EC06A008724E0666348668 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
+		494E189092D4E1A5538B75D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		499C7407A60E555D92A482F4 /* SummaryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryWidget.swift; sourceTree = "<group>"; };
+		508B96C7D83BE60463680520 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		5387384AA19E66119477FD2B /* SummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCard.swift; sourceTree = "<group>"; };
+		5907ACC9148C60D51AF6C5F3 /* WeeklyHabitWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyHabitWidget.swift; sourceTree = "<group>"; };
+		5B7A860BFE5EDAB4CDD1CBF7 /* tpomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tpomApp.swift; sourceTree = "<group>"; };
+		5F2EDFFF22E955DB37AB3FB2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		63588C2E513B1A249B8AC7A1 /* HeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapView.swift; sourceTree = "<group>"; };
+		66CFE4C383C0C46884D934F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		6910B2A0F3BF75C196E8E500 /* HabitsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsListView.swift; sourceTree = "<group>"; };
+		6B6B2CE81F0FABDB25B9E46F /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		756AE8CB9F0FAD005F1A8391 /* SessionFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionFormView.swift; sourceTree = "<group>"; };
+		8086A8A16DC8532C8DA11B16 /* WeeklyChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyChartView.swift; sourceTree = "<group>"; };
+		83FAB94349C4A92DE0CEAFA4 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		905C43054FEE33EC1DED96E2 /* WidgetDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataStore.swift; sourceTree = "<group>"; };
+		9BB3D490F80440277F358ED6 /* WeeklyChartWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyChartWidget.swift; sourceTree = "<group>"; };
+		A5F98232A6376ADBDC6A6B9E /* tpomWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tpomWidgets.swift; sourceTree = "<group>"; };
+		B598CDC75706907A24181EFA /* tpom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tpom.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C17B399A8FDF12CE32DFC4D1 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		E44763E712B274DF11411538 /* tpomWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = tpomWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0521C26BB9CCBA98288E3AA /* tpom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tpom.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6A8D221420EBF349A07F5A23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8B54DD8DA1EE1D23B0F7CC3A /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		06A902BB26667CF08FDB06DE /* tpom */ = {
+			isa = PBXGroup;
+			children = (
+				494E189092D4E1A5538B75D4 /* Assets.xcassets */,
+				6B6B2CE81F0FABDB25B9E46F /* AuthView.swift */,
+				5F2EDFFF22E955DB37AB3FB2 /* ContentView.swift */,
+				83FAB94349C4A92DE0CEAFA4 /* DataService.swift */,
+				6910B2A0F3BF75C196E8E500 /* HabitsListView.swift */,
+				63588C2E513B1A249B8AC7A1 /* HeatmapView.swift */,
+				36B7EF1746362D847F44FD14 /* LogView.swift */,
+				756AE8CB9F0FAD005F1A8391 /* SessionFormView.swift */,
+				C17B399A8FDF12CE32DFC4D1 /* StatsView.swift */,
+				5387384AA19E66119477FD2B /* SummaryCard.swift */,
+				050DA365B794B019D01A868F /* SupabaseClient.swift */,
+				41EC06A008724E0666348668 /* TimerView.swift */,
+				F0521C26BB9CCBA98288E3AA /* tpom.entitlements */,
+				5B7A860BFE5EDAB4CDD1CBF7 /* tpomApp.swift */,
+				8086A8A16DC8532C8DA11B16 /* WeeklyChartView.swift */,
+			);
+			path = tpom;
+			sourceTree = "<group>";
+		};
+		07989949EA701C9B9320F095 /* tpomWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				13CB9F30605F4B10CF7ECF69 /* HeatmapWidget.swift */,
+				66CFE4C383C0C46884D934F7 /* Info.plist */,
+				499C7407A60E555D92A482F4 /* SummaryWidget.swift */,
+				0CB5C34452F19896B81AFE42 /* tpomWidgets.entitlements */,
+				A5F98232A6376ADBDC6A6B9E /* tpomWidgets.swift */,
+				9BB3D490F80440277F358ED6 /* WeeklyChartWidget.swift */,
+				5907ACC9148C60D51AF6C5F3 /* WeeklyHabitWidget.swift */,
+			);
+			path = tpomWidgets;
+			sourceTree = "<group>";
+		};
+		3B4C2BC8D392D850CE7F0732 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				2EBCB6DB5C15DC634820E80B /* Models.swift */,
+				508B96C7D83BE60463680520 /* Theme.swift */,
+				905C43054FEE33EC1DED96E2 /* WidgetDataStore.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		9D7ECC55E51B2787DBAEDF0A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B598CDC75706907A24181EFA /* tpom.app */,
+				E44763E712B274DF11411538 /* tpomWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A88409B07ACABABB5B415DAA = {
+			isa = PBXGroup;
+			children = (
+				3B4C2BC8D392D850CE7F0732 /* Shared */,
+				06A902BB26667CF08FDB06DE /* tpom */,
+				07989949EA701C9B9320F095 /* tpomWidgets */,
+				9D7ECC55E51B2787DBAEDF0A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A71EC070476DE99C45694625 /* tpomWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 427077B3111A6D5FE7649512 /* Build configuration list for PBXNativeTarget "tpomWidgets" */;
+			buildPhases = (
+				F8733C0A960098CEAF131E40 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tpomWidgets;
+			packageProductDependencies = (
+			);
+			productName = tpomWidgets;
+			productReference = E44763E712B274DF11411538 /* tpomWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		DF84CC6A40CDBBFF59F08BE1 /* tpom */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7660CD2323EC7386E167B471 /* Build configuration list for PBXNativeTarget "tpom" */;
+			buildPhases = (
+				CB7339F6ABD0F83F7F58D289 /* Sources */,
+				A8DD270C69D1DB7EF68E0014 /* Resources */,
+				6A8D221420EBF349A07F5A23 /* Frameworks */,
+				D3F3890510CFAACCEF4098E5 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				91C71C79594EE04CA829658A /* PBXTargetDependency */,
+			);
+			name = tpom;
+			packageProductDependencies = (
+				A56BE729F6038469EA2D44ED /* Supabase */,
+			);
+			productName = tpom;
+			productReference = B598CDC75706907A24181EFA /* tpom.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1FE8E1D5631E4B7956371250 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					A71EC070476DE99C45694625 = {
+						ProvisioningStyle = Automatic;
+					};
+					DF84CC6A40CDBBFF59F08BE1 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 1C31F1A259E515DF0C9D02D0 /* Build configuration list for PBXProject "tpom" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = A88409B07ACABABB5B415DAA;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4E1DD243AB7AB503793DC4EB /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 9D7ECC55E51B2787DBAEDF0A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DF84CC6A40CDBBFF59F08BE1 /* tpom */,
+				A71EC070476DE99C45694625 /* tpomWidgets */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A8DD270C69D1DB7EF68E0014 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A3D0F23AE6003B9DF63B16A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CB7339F6ABD0F83F7F58D289 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78FA69EE809A53CE4062DC12 /* AuthView.swift in Sources */,
+				3D1243416404BD8D67F509CD /* ContentView.swift in Sources */,
+				E9574F77829201AAA6C80E51 /* DataService.swift in Sources */,
+				69406CADFC3FE128CB82CB3D /* HabitsListView.swift in Sources */,
+				73064914EAD0E1FB0EE3495E /* HeatmapView.swift in Sources */,
+				F6E71E940627C56A00262BEB /* LogView.swift in Sources */,
+				D90A45C3A720EC0555C38CF9 /* Models.swift in Sources */,
+				F3FB39145F2631E43EBCEC1C /* SessionFormView.swift in Sources */,
+				949A2C8EBF6AC9D3E5FAE9D0 /* StatsView.swift in Sources */,
+				3BC8923E02961C725C97C2A6 /* SummaryCard.swift in Sources */,
+				180BEE06D06F940799818328 /* SupabaseClient.swift in Sources */,
+				125C4535B648BE8A5C052AF0 /* Theme.swift in Sources */,
+				B57AC81CD384653EA0F98071 /* TimerView.swift in Sources */,
+				A36D3DC19DD307C5B27E36AF /* WeeklyChartView.swift in Sources */,
+				74722EE307F39220171DF804 /* WidgetDataStore.swift in Sources */,
+				295DAE38EEEF92E46B713A0F /* tpomApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8733C0A960098CEAF131E40 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD3129FC2AEDF90586232A96 /* HeatmapWidget.swift in Sources */,
+				75EB1672CC324D15F23167CB /* Models.swift in Sources */,
+				46E3129A082C723DFF3453D0 /* SummaryWidget.swift in Sources */,
+				E7ED8C8DBC198D6D81778011 /* Theme.swift in Sources */,
+				5FB92C76FC4F5575298674AD /* WeeklyChartWidget.swift in Sources */,
+				99F065EF162F13CEF427E7E0 /* WeeklyHabitWidget.swift in Sources */,
+				F482FE6ED3A1A7ACAF389750 /* WidgetDataStore.swift in Sources */,
+				FFA3A9D09BC7BBF49A1A435F /* tpomWidgets.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		91C71C79594EE04CA829658A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A71EC070476DE99C45694625 /* tpomWidgets */;
+			targetProxy = AEDCFFA5DF9B17C15D7CCAE3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		480BA3BD7B6A32A15042B89A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		4AD1E46E6D91FDA337B40AFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6B23D3218B78843AB88147F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = tpom/tpom.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CT73T9Z8H3;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = tpom;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maximus.tpom;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		93D19237EFFB383983888947 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = tpomWidgets/tpomWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = CT73T9Z8H3;
+				INFOPLIST_FILE = tpomWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.maximus.tpom.Widgets;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		97A95CBF654BD0F666EADF38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = tpom/tpom.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CT73T9Z8H3;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = tpom;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maximus.tpom;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FC09AED03D5D8E55F307D0CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = tpomWidgets/tpomWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = CT73T9Z8H3;
+				INFOPLIST_FILE = tpomWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.maximus.tpom.Widgets;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1C31F1A259E515DF0C9D02D0 /* Build configuration list for PBXProject "tpom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4AD1E46E6D91FDA337B40AFC /* Debug */,
+				480BA3BD7B6A32A15042B89A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		427077B3111A6D5FE7649512 /* Build configuration list for PBXNativeTarget "tpomWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93D19237EFFB383983888947 /* Debug */,
+				FC09AED03D5D8E55F307D0CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7660CD2323EC7386E167B471 /* Build configuration list for PBXNativeTarget "tpom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6B23D3218B78843AB88147F2 /* Debug */,
+				97A95CBF654BD0F666EADF38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4E1DD243AB7AB503793DC4EB /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A56BE729F6038469EA2D44ED /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E1DD243AB7AB503793DC4EB /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 1FE8E1D5631E4B7956371250 /* Project object */;
+}

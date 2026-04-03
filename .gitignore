@@ -1,5 +1,5 @@
-tpom
-pomo
+/tpom
+/pomo
 *.db
 dist/
 .env
