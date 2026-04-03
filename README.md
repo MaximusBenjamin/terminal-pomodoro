@@ -4,6 +4,14 @@ A minimalist pomodoro timer for the terminal, built with Go. Lazygit-style TUI w
 
 ![Go](https://img.shields.io/badge/Go-1.26-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
+<p align="center">
+  <img src="assets/timer.png" alt="Timer" width="700">
+</p>
+
+<p align="center">
+  <img src="assets/stats.png" alt="Stats" width="700">
+</p>
+
 ## Features
 
 - **Timer** - Countdown with adjustable duration, pause/resume, overtime tracking
