@@ -368,11 +368,13 @@ func (m Model) renderBigTime() string {
 	var minutes, seconds int
 	isOvertime := m.state == Overtime
 
+	isPausedOvertime := m.state == Paused && m.remaining <= 0 && m.overtime > 0
+
 	if m.state == Confirming {
 		// Show total elapsed time during confirmation
 		minutes = m.elapsed / 60
 		seconds = m.elapsed % 60
-	} else if isOvertime {
+	} else if isOvertime || isPausedOvertime {
 		total := m.overtime
 		minutes = total / 60
 		seconds = total % 60
@@ -395,7 +397,7 @@ func (m Model) renderBigTime() string {
 	var lines [3]string
 	for row := 0; row < 3; row++ {
 		parts := []string{}
-		if isOvertime {
+		if isOvertime || isPausedOvertime {
 			// Add minus sign
 			switch row {
 			case 0:
@@ -419,10 +421,10 @@ func (m Model) renderBigTime() string {
 
 	// Style the time based on state
 	var timeStyle lipgloss.Style
-	switch m.state {
-	case Overtime:
+	switch {
+	case m.state == Overtime || isPausedOvertime:
 		timeStyle = lipgloss.NewStyle().Foreground(theme.ColorOvertime).Bold(true)
-	case Confirming:
+	case m.state == Confirming:
 		timeStyle = lipgloss.NewStyle().Foreground(theme.ColorWarning).Bold(true)
 	default:
 		timeStyle = lipgloss.NewStyle().Foreground(theme.ColorAccent).Bold(true)
@@ -464,7 +466,7 @@ func (m Model) renderHabit() string {
 		name = "no habit selected"
 		return common.MutedStyle.Render(name)
 	}
-	return common.AccentStyle.Render(name)
+	return lipgloss.NewStyle().Foreground(lipgloss.Color(m.habit.Color)).Render(name)
 }
 
 func (m Model) renderStatus() string {
