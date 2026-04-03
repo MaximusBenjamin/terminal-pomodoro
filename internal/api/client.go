@@ -101,6 +101,48 @@ func (c *Client) doRequest(method, path string, body interface{}, headers map[st
 		return nil, fmt.Errorf("reading response: %w", err)
 	}
 
+	if resp.StatusCode == 401 {
+		// Token expired — try refreshing and retry once
+		refreshed, err := RefreshAccessToken()
+		if err != nil {
+			return nil, fmt.Errorf("session expired, please run: tpom login")
+		}
+		_ = SaveAuth(refreshed)
+		c.authToken = refreshed.AccessToken
+
+		// Rebuild the request with new token
+		var retryReader io.Reader
+		if body != nil {
+			b, _ := json.Marshal(body)
+			retryReader = bytes.NewReader(b)
+		}
+		retryReq, err := http.NewRequest(method, c.baseURL+path, retryReader)
+		if err != nil {
+			return nil, fmt.Errorf("creating retry request: %w", err)
+		}
+		retryReq.Header.Set("apikey", c.anonKey)
+		retryReq.Header.Set("Authorization", "Bearer "+c.authToken)
+		retryReq.Header.Set("Content-Type", "application/json")
+		for k, v := range headers {
+			retryReq.Header.Set(k, v)
+		}
+
+		retryResp, err := c.httpClient.Do(retryReq)
+		if err != nil {
+			return nil, fmt.Errorf("executing retry request: %w", err)
+		}
+		defer retryResp.Body.Close()
+
+		data, err = io.ReadAll(retryResp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("reading retry response: %w", err)
+		}
+		if retryResp.StatusCode < 200 || retryResp.StatusCode >= 300 {
+			return nil, fmt.Errorf("API error %d: %s", retryResp.StatusCode, string(data))
+		}
+		return data, nil
+	}
+
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, fmt.Errorf("API error %d: %s", resp.StatusCode, string(data))
 	}
