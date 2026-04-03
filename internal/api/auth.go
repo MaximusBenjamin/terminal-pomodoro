@@ -176,9 +176,13 @@ func RefreshAccessToken() (AuthToken, error) {
 	if auth.RefreshToken == "" {
 		return AuthToken{}, fmt.Errorf("no refresh token stored")
 	}
+	return refreshWithToken(auth.RefreshToken)
+}
 
+// refreshWithToken exchanges a refresh token for a new access + refresh token pair.
+func refreshWithToken(refreshToken string) (AuthToken, error) {
 	body := map[string]string{
-		"refresh_token": auth.RefreshToken,
+		"refresh_token": refreshToken,
 	}
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
@@ -214,10 +218,15 @@ func RefreshAccessToken() (AuthToken, error) {
 		return AuthToken{}, fmt.Errorf("decoding refresh response: %w", err)
 	}
 
+	// Try to preserve the email from disk if we have it
+	email := ""
+	if stored, err := LoadAuth(); err == nil {
+		email = stored.Email
+	}
 	token := AuthToken{
 		AccessToken:  authResp.AccessToken,
 		RefreshToken: authResp.RefreshToken,
-		Email:        auth.Email,
+		Email:        email,
 	}
 	return token, nil
 }

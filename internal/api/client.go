@@ -21,10 +21,11 @@ const (
 
 // Client is a Supabase REST API client that provides the same interface as store.Store.
 type Client struct {
-	baseURL    string
-	anonKey    string
-	authToken  string
-	httpClient *http.Client
+	baseURL      string
+	anonKey      string
+	authToken    string
+	refreshToken string
+	httpClient   *http.Client
 }
 
 // NewClient creates a new Supabase API client with the stored auth token.
@@ -44,10 +45,11 @@ func NewClient() (*Client, error) {
 	}
 
 	return &Client{
-		baseURL:    supabaseURL,
-		anonKey:    supabaseAnonKey,
-		authToken:  auth.AccessToken,
-		httpClient: &http.Client{Timeout: 15 * time.Second},
+		baseURL:      supabaseURL,
+		anonKey:      supabaseAnonKey,
+		authToken:    auth.AccessToken,
+		refreshToken: auth.RefreshToken,
+		httpClient:   &http.Client{Timeout: 15 * time.Second},
 	}, nil
 }
 
@@ -101,14 +103,15 @@ func (c *Client) doRequest(method, path string, body interface{}, headers map[st
 		return nil, fmt.Errorf("reading response: %w", err)
 	}
 
-	if resp.StatusCode == 401 {
+	if resp.StatusCode == 401 && c.refreshToken != "" {
 		// Token expired — try refreshing and retry once
-		refreshed, err := RefreshAccessToken()
+		refreshed, err := refreshWithToken(c.refreshToken)
 		if err != nil {
 			return nil, fmt.Errorf("session expired, please run: tpom login")
 		}
 		_ = SaveAuth(refreshed)
 		c.authToken = refreshed.AccessToken
+		c.refreshToken = refreshed.RefreshToken
 
 		// Rebuild the request with new token
 		var retryReader io.Reader
