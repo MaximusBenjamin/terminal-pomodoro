@@ -375,7 +375,8 @@ func (m Model) renderBigTime() string {
 		minutes = m.elapsed / 60
 		seconds = m.elapsed % 60
 	} else if isOvertime || isPausedOvertime {
-		total := m.overtime
+		// Show total elapsed time (planned + overtime)
+		total := m.elapsed
 		minutes = total / 60
 		seconds = total % 60
 	} else {
@@ -397,18 +398,6 @@ func (m Model) renderBigTime() string {
 	var lines [3]string
 	for row := 0; row < 3; row++ {
 		parts := []string{}
-		if isOvertime || isPausedOvertime {
-			// Add minus sign
-			switch row {
-			case 0:
-				parts = append(parts, "   ")
-			case 1:
-				parts = append(parts, "───")
-			case 2:
-				parts = append(parts, "   ")
-			}
-			parts = append(parts, " ")
-		}
 		parts = append(parts,
 			bigDigits[d1][row], " ",
 			bigDigits[d2][row], " ",
@@ -423,7 +412,7 @@ func (m Model) renderBigTime() string {
 	var timeStyle lipgloss.Style
 	switch {
 	case m.state == Overtime || isPausedOvertime:
-		timeStyle = lipgloss.NewStyle().Foreground(theme.ColorOvertime).Bold(true)
+		timeStyle = lipgloss.NewStyle().Foreground(theme.ColorSuccess).Bold(true)
 	case m.state == Confirming:
 		timeStyle = lipgloss.NewStyle().Foreground(theme.ColorWarning).Bold(true)
 	default:
@@ -478,7 +467,7 @@ func (m Model) renderStatus() string {
 	case Paused:
 		return common.WarningStyle.Render("paused")
 	case Overtime:
-		return common.OvertimeStyle.Render("overtime!")
+		return common.SuccessStyle.Render("overtime")
 	case Confirming:
 		if m.confirmIsReset {
 			return common.WarningStyle.Render("save before resetting?")
