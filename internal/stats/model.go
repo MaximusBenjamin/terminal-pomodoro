@@ -18,33 +18,44 @@ type dataLoadedMsg struct {
 	todayByHabit []api.HabitBreakdown
 	dailyHours   []api.DailyHours
 	weekByHabit  map[int]api.HabitWeekData
+	streak       StreakResult
+	habits       []common.Habit
 	loadErr      string
 }
 
 // Model is the stats sub-model.
 type Model struct {
-	client       *api.Client
-	today        float64
-	week         float64
-	allTime      float64
-	todayByHabit []api.HabitBreakdown
-	dailyHours   []api.DailyHours
-	weekByHabit  map[int]api.HabitWeekData
-	width        int
-	height       int
-	loaded         bool
-	loadErr        string
-	scroll         int // vertical scroll offset
-	contentHeight  int // total rendered lines (for clamping)
-	weekOffset     int // 0 = current week, -1 = last week, etc.
+	client        *api.Client
+	today         float64
+	week          float64
+	allTime       float64
+	todayByHabit  []api.HabitBreakdown
+	dailyHours    []api.DailyHours
+	weekByHabit   map[int]api.HabitWeekData
+	streak        StreakResult
+	habits        []common.Habit
+	leeway        int
+	width         int
+	height        int
+	loaded        bool
+	loadErr       string
+	scroll        int // vertical scroll offset
+	contentHeight int // total rendered lines (for clamping)
+	weekOffset    int // 0 = current week, -1 = last week, etc.
 }
 
 // New creates a new stats model.
-func New(c *api.Client) Model {
+func New(c *api.Client, leeway int) Model {
 	return Model{
 		client: c,
 		width:  80,
+		leeway: leeway,
 	}
+}
+
+// SetLeeway updates the leeway setting without reloading.
+func (m *Model) SetLeeway(leeway int) {
+	m.leeway = leeway
 }
 
 // Init returns a command that loads all stats data.
@@ -62,6 +73,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.todayByHabit = msg.todayByHabit
 		m.dailyHours = msg.dailyHours
 		m.weekByHabit = msg.weekByHabit
+		m.streak = msg.streak
+		m.habits = msg.habits
 		m.loaded = true
 		m.loadErr = msg.loadErr
 		m.contentHeight = m.computeContentHeight()
@@ -193,6 +206,7 @@ func (m Model) renderContent() string {
 
 	var sections []string
 	sections = append(sections, RenderSummary(m.today, m.week, m.allTime, m.width))
+	sections = append(sections, center(RenderStreak(m.streak, m.width)))
 	sections = append(sections, "")
 
 	// Today breakdown + Habit Tracker side by side
@@ -225,6 +239,8 @@ func (m Model) renderContent() string {
 }
 
 func (m Model) loadData() tea.Cmd {
+	leeway := m.leeway
+	weekOffset := m.weekOffset
 	return func() tea.Msg {
 		var d dataLoadedMsg
 		var err error
@@ -238,7 +254,12 @@ func (m Model) loadData() tea.Cmd {
 		d.allTime, _ = m.client.AllTimeHours()
 		d.todayByHabit, _ = m.client.TodayHoursByHabit()
 		d.dailyHours, _ = m.client.DailyHoursRange(365)
-		d.weekByHabit, _ = m.client.WeekDailyByHabit(m.weekOffset)
+		d.weekByHabit, _ = m.client.WeekDailyByHabit(weekOffset)
+
+		// Streak calculation
+		d.habits, _ = m.client.ListHabits()
+		dailySessions, _ := m.client.DailyHabitSessions(365)
+		d.streak = CalculateStreak(dailySessions, d.habits, leeway)
 
 		return d
 	}

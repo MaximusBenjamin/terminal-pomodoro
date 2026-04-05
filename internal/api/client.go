@@ -608,6 +608,33 @@ func (c *Client) WeekDailyByHabit(offset int) (map[int]HabitWeekData, error) {
 	return result, nil
 }
 
+// DailyHabitSessions returns a map of date string → set of habit IDs that had
+// at least one session on that day (using 4AM boundary), for the last N days.
+func (c *Client) DailyHabitSessions(days int) (map[string]map[int]bool, error) {
+	sessions, err := c.fetchAllSessions()
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[string]map[int]bool)
+	now := time.Now().Local()
+	today := EffectiveDate(now)
+	startDate := today.AddDate(0, 0, -days)
+
+	for _, s := range sessions {
+		sessionDate := EffectiveDate(s.StartTime.Local())
+		if sessionDate.Before(startDate) || sessionDate.After(today) {
+			continue
+		}
+		key := sessionDate.Format("2006-01-02")
+		if result[key] == nil {
+			result[key] = make(map[int]bool)
+		}
+		result[key][s.HabitID] = true
+	}
+	return result, nil
+}
+
 // HabitBreakdownForPeriod returns hours per habit for the last N days.
 func (c *Client) HabitBreakdownForPeriod(days int) ([]HabitBreakdown, error) {
 	habits, err := c.ListHabits()

@@ -9,11 +9,12 @@ import (
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/common"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/habits"
 	logview "github.com/MaximusBenjamin/terminal-pomodoro/internal/log"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/settings"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/stats"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/timer"
 )
 
-const numTabs = 4
+const numTabs = 5
 
 // Model is the top-level Bubble Tea model that orchestrates all views.
 type Model struct {
@@ -22,6 +23,7 @@ type Model struct {
 	stats     stats.Model
 	habits    habits.Model
 	log       logview.Model
+	settings  settings.Model
 	client    *api.Client
 	width     int
 	height    int
@@ -32,7 +34,8 @@ type Model struct {
 func New(c *api.Client) Model {
 	h := habits.New(c)
 	t := timer.New(c)
-	st := stats.New(c)
+	se := settings.New()
+	st := stats.New(c, se.Leeway())
 	l := logview.New(c)
 
 	// Set the first habit as the default for the timer.
@@ -47,6 +50,7 @@ func New(c *api.Client) Model {
 		stats:     st,
 		habits:    h,
 		log:       l,
+		settings:  se,
 		client:    c,
 	}
 }
@@ -58,6 +62,7 @@ func (m Model) Init() tea.Cmd {
 		m.stats.Init(),
 		m.habits.Init(),
 		m.log.Init(),
+		m.settings.Init(),
 	)
 }
 
@@ -84,6 +89,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.habits, cmd = m.habits.Update(inner)
 		cmds = append(cmds, cmd)
 		m.log, cmd = m.log.Update(inner)
+		cmds = append(cmds, cmd)
+		m.settings, cmd = m.settings.Update(inner)
 		cmds = append(cmds, cmd)
 
 		return m, tea.Batch(cmds...)
@@ -189,6 +196,16 @@ func (m Model) updateActiveTab(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.habits, cmd = m.habits.Update(msg)
 	case common.LogTab:
 		m.log, cmd = m.log.Update(msg)
+	case common.SettingsTab:
+		prevLeeway := m.settings.Leeway()
+		m.settings, cmd = m.settings.Update(msg)
+		// Reload stats if leeway changed
+		if m.settings.Leeway() != prevLeeway {
+			m.stats.SetLeeway(m.settings.Leeway())
+			var statsCmd tea.Cmd
+			m.stats, statsCmd = m.stats.Update(common.StatsRefreshMsg{})
+			cmd = tea.Batch(cmd, statsCmd)
+		}
 	}
 	return m, cmd
 }
@@ -204,6 +221,8 @@ func (m Model) updateAll(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.habits, cmd = m.habits.Update(msg)
 	cmds = append(cmds, cmd)
 	m.log, cmd = m.log.Update(msg)
+	cmds = append(cmds, cmd)
+	m.settings, cmd = m.settings.Update(msg)
 	cmds = append(cmds, cmd)
 
 	return m, tea.Batch(cmds...)
@@ -224,6 +243,7 @@ func (m Model) View() string {
 		{"Stats", common.StatsTab},
 		{"Habits", common.HabitsTab},
 		{"Log", common.LogTab},
+		{"Settings", common.SettingsTab},
 	}
 
 	var tabParts []string
@@ -253,6 +273,8 @@ func (m Model) View() string {
 		content = m.habits.View()
 	case common.LogTab:
 		content = m.log.View()
+	case common.SettingsTab:
+		content = m.settings.View()
 	}
 
 	// Compose the inner layout.

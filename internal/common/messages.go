@@ -38,4 +38,5 @@ const (
 	StatsTab
 	HabitsTab
 	LogTab
+	SettingsTab
 )
