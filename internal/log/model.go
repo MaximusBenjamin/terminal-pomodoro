@@ -253,7 +253,28 @@ func (m Model) View() string {
 	b.WriteString(common.TitleStyle.Render("Log"))
 	b.WriteString("\n\n")
 
+	cursorLine := 0 // track which line the cursor is on
+	lineNum := 2    // already wrote title + blank line
+
 	var lastDate string
+	for i, s := range m.sessions {
+		dateLabel := formatDateGroup(s.StartTime)
+		if dateLabel != lastDate {
+			if lastDate != "" {
+				lineNum++
+			}
+			lineNum++ // date header
+			lastDate = dateLabel
+		}
+
+		if i == m.cursor {
+			cursorLine = lineNum
+		}
+		lineNum++ // session line
+	}
+
+	// Re-render (now that we know cursorLine, build the actual content)
+	lastDate = ""
 	for i, s := range m.sessions {
 		dateLabel := formatDateGroup(s.StartTime)
 		if dateLabel != lastDate {
@@ -298,7 +319,14 @@ func (m Model) View() string {
 		return listContent + footerStr
 	}
 
-	// Scroll handling — keep cursor visible
+	// Auto-scroll to keep cursor visible
+	if cursorLine < m.scroll+2 {
+		m.scroll = cursorLine - 2
+	}
+	if cursorLine >= m.scroll+listHeight-2 {
+		m.scroll = cursorLine - listHeight + 3
+	}
+
 	maxScroll := totalListLines - listHeight
 	if m.scroll > maxScroll {
 		m.scroll = maxScroll
