@@ -22,9 +22,9 @@ enum Theme {
     static let border   = Color(hex: "#3b4261")
     static let muted    = Color(hex: "#565f89")
 
-    static let heatmap0 = Color(hex: "#3b4261")
-    static let heatmap1 = Color(hex: "#2f334d")
-    static let heatmap2 = Color(hex: "#3d5999")
-    static let heatmap3 = Color(hex: "#5a7fcc")
-    static let heatmap4 = Color(hex: "#7aa2f7")
+    static let heatmap0 = Color(hex: "#3b4261") // none (muted gray)
+    static let heatmap1 = Color(hex: "#1e3a1e") // low
+    static let heatmap2 = Color(hex: "#2d6b2d") // medium-low
+    static let heatmap3 = Color(hex: "#52a852") // medium
+    static let heatmap4 = Color(hex: "#9ece6a") // high (bright green)
 }

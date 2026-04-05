@@ -18,7 +18,7 @@ type habitsLoadedMsg struct {
 
 // Default colors assigned to new habits in rotation.
 var defaultColors = []string{
-	"#7aa2f7", "#bb9af7", "#9ece6a", "#e0af68", "#7dcfff", "#ff9e64",
+	"#ff9e64", "#bb9af7", "#9ece6a", "#e0af68", "#7dcfff", "#f7768e",
 }
 
 // Model is the Bubble Tea sub-model for the habits view.

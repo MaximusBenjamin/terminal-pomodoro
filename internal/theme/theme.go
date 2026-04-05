@@ -17,12 +17,12 @@ var (
 	ColorCyan     = lipgloss.Color("#7dcfff")
 	ColorOrange   = lipgloss.Color("#ff9e64")
 
-	// Heatmap intensity levels (dark to bright)
+	// Heatmap intensity levels (dark green to bright green)
 	HeatmapColors = []lipgloss.Color{
-		lipgloss.Color("#1a1b26"), // 0 - none
-		lipgloss.Color("#2f334d"), // 1 - low
-		lipgloss.Color("#3d5999"), // 2 - medium-low
-		lipgloss.Color("#5a7fcc"), // 3 - medium
-		lipgloss.Color("#7aa2f7"), // 4 - high
+		lipgloss.Color("#3b4261"), // 0 - none (muted gray)
+		lipgloss.Color("#1e3a1e"), // 1 - low
+		lipgloss.Color("#2d6b2d"), // 2 - medium-low
+		lipgloss.Color("#52a852"), // 3 - medium
+		lipgloss.Color("#9ece6a"), // 4 - high (bright green)
 	}
 )
