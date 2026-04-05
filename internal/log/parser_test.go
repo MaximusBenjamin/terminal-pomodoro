@@ -57,7 +57,7 @@ func TestParseTimeRange(t *testing.T) {
 		{"1:30pm - 2:30pm math", 3600, false},
 		{"9am to 11am programming", 2 * 3600, false},
 		{"13:00 to 14:00 finance", 3600, false},
-		{"2pm to 1pm math", 0, true}, // end before start
+		{"11:36pm to 0:09am math", 33 * 60, false}, // crosses midnight
 	}
 
 	for _, tt := range tests {

@@ -278,8 +278,9 @@ func buildTimeRange(startStr, endStr string, habit common.Habit, dateStr string)
 	end := time.Date(baseDate.Year(), baseDate.Month(), baseDate.Day(),
 		endTime.hour, endTime.min, 0, 0, time.Local)
 
+	// If end is before start, assume it crosses midnight (e.g. 23:36-0:09)
 	if !end.After(start) {
-		return ParsedSession{}, fmt.Errorf("end time must be after start time")
+		end = end.AddDate(0, 0, 1)
 	}
 
 	dur := int(end.Sub(start).Seconds())
