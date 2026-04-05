@@ -212,11 +212,47 @@ func (m Model) View() string {
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
 	}
 
+	// Build footer first so we know how much space it takes
+	var footer strings.Builder
+	footer.WriteString("\n")
+	switch m.mode {
+	case modeAdd:
+		footer.WriteString(common.MutedStyle.Render("  Add: "))
+		footer.WriteString(m.input.View())
+		footer.WriteString("\n")
+		if m.parseErr != "" {
+			footer.WriteString(common.OvertimeStyle.Render("  ⚠ " + m.parseErr))
+			footer.WriteString("\n")
+		}
+		footer.WriteString("  " + helpEntry("enter", "save") + "  " + helpEntry("esc", "cancel"))
+	case modeEdit:
+		footer.WriteString(common.MutedStyle.Render("  Edit: "))
+		footer.WriteString(m.input.View())
+		footer.WriteString("\n")
+		if m.parseErr != "" {
+			footer.WriteString(common.OvertimeStyle.Render("  ⚠ " + m.parseErr))
+			footer.WriteString("\n")
+		}
+		footer.WriteString("  " + helpEntry("enter", "save") + "  " + helpEntry("esc", "cancel"))
+	case modeConfirmDelete:
+		if len(m.sessions) > 0 {
+			s := m.sessions[m.cursor]
+			desc := fmt.Sprintf("%s %s (%s)", s.StartTime.Format("15:04"), s.HabitName, formatDuration(s.ActualSecs))
+			footer.WriteString(common.WarningStyle.Render(fmt.Sprintf("  Delete \"%s\"?", desc)))
+			footer.WriteString("\n")
+			footer.WriteString("  " + helpEntry("y", "delete") + "  " + helpEntry("x", "cancel"))
+		}
+	default:
+		footer.WriteString(m.renderHelp())
+	}
+	footerStr := footer.String()
+	footerLines := strings.Count(footerStr, "\n") + 1
+
+	// Build scrollable session list
 	var b strings.Builder
 	b.WriteString(common.TitleStyle.Render("Log"))
 	b.WriteString("\n\n")
 
-	// Group sessions by date
 	var lastDate string
 	for i, s := range m.sessions {
 		dateLabel := formatDateGroup(s.StartTime)
@@ -247,60 +283,36 @@ func (m Model) View() string {
 		b.WriteString("  " + line + "\n")
 	}
 
-	// Modal states
-	b.WriteString("\n")
-	switch m.mode {
-	case modeAdd:
-		b.WriteString(common.MutedStyle.Render("  Add: "))
-		b.WriteString(m.input.View())
-		b.WriteString("\n")
-		if m.parseErr != "" {
-			b.WriteString(common.OvertimeStyle.Render("  ⚠ " + m.parseErr))
-			b.WriteString("\n")
-		}
-		b.WriteString("  " + helpEntry("enter", "save") + "  " + helpEntry("esc", "cancel"))
-	case modeEdit:
-		b.WriteString(common.MutedStyle.Render("  Edit: "))
-		b.WriteString(m.input.View())
-		b.WriteString("\n")
-		if m.parseErr != "" {
-			b.WriteString(common.OvertimeStyle.Render("  ⚠ " + m.parseErr))
-			b.WriteString("\n")
-		}
-		b.WriteString("  " + helpEntry("enter", "save") + "  " + helpEntry("esc", "cancel"))
-	case modeConfirmDelete:
-		if len(m.sessions) > 0 {
-			s := m.sessions[m.cursor]
-			desc := fmt.Sprintf("%s %s (%s)", s.StartTime.Format("15:04"), s.HabitName, formatDuration(s.ActualSecs))
-			b.WriteString(common.WarningStyle.Render(fmt.Sprintf("  Delete \"%s\"?", desc)))
-			b.WriteString("\n")
-			b.WriteString("  " + helpEntry("y", "delete") + "  " + helpEntry("x", "cancel"))
-		}
-	default:
-		b.WriteString(m.renderHelp())
+	listContent := b.String()
+	listLines := strings.Split(listContent, "\n")
+	totalListLines := len(listLines)
+
+	// Available height for the session list (reserve space for footer)
+	listHeight := m.height - footerLines
+	if listHeight < 1 {
+		listHeight = 1
 	}
 
-	content := b.String()
-
-	// Scroll handling
-	lines := strings.Split(content, "\n")
-	totalLines := len(lines)
-	if totalLines <= m.height {
-		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Top, content)
+	// If everything fits, no scrolling needed
+	if totalListLines <= listHeight {
+		return listContent + footerStr
 	}
 
-	maxScroll := totalLines - m.height
+	// Scroll handling — keep cursor visible
+	maxScroll := totalListLines - listHeight
 	if m.scroll > maxScroll {
 		m.scroll = maxScroll
 	}
 	if m.scroll < 0 {
 		m.scroll = 0
 	}
-	end := m.scroll + m.height
-	if end > totalLines {
-		end = totalLines
+	end := m.scroll + listHeight
+	if end > totalListLines {
+		end = totalListLines
 	}
-	return strings.Join(lines[m.scroll:end], "\n")
+
+	visible := strings.Join(listLines[m.scroll:end], "\n")
+	return visible + footerStr
 }
 
 func (m Model) renderHelp() string {
