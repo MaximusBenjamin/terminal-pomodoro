@@ -99,3 +99,21 @@ struct HabitToday: Identifiable {
     let hours: Double
     var id: String { habitName }
 }
+
+struct StreakResult {
+    let currentStreak: Int
+    let leewayUsedWeek: Int
+    let leewayRemaining: Int
+    let leewayPerWeek: Int
+}
+
+// Persists user settings in shared UserDefaults
+enum AppSettings {
+    private static let suiteName = "group.com.maximus.tpom"
+    private static let leewayKey = "leeway_days_per_week"
+
+    static var leewayDaysPerWeek: Int {
+        get { UserDefaults(suiteName: suiteName)?.integer(forKey: leewayKey) ?? 0 }
+        set { UserDefaults(suiteName: suiteName)?.set(newValue, forKey: leewayKey) }
+    }
+}

@@ -278,6 +278,64 @@ class DataService {
         }.sorted { $0.hours > $1.hours }
     }
 
+    func calculateStreak(leeway: Int) -> StreakResult {
+        guard !habits.isEmpty else {
+            return StreakResult(currentStreak: 0, leewayUsedWeek: 0, leewayRemaining: leeway, leewayPerWeek: leeway)
+        }
+
+        let habitIDs = Set(habits.map { $0.id })
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+
+        // Build map: date string → set of habit IDs with sessions
+        var dailySessions: [String: Set<Int>] = [:]
+        for session in sessions {
+            let date = parseDate(session.startTime)
+            let comp = effectiveDate(date)
+            if let day = calendar.date(from: comp) {
+                let key = formatter.string(from: day)
+                dailySessions[key, default: []].insert(session.habitId)
+            }
+        }
+
+        let today = calendar.date(from: effectiveDate(Date()))!
+        var leewayUsed: [String: Int] = [:] // weekKey → used count
+        var streak = 0
+        var leewayUsedThisWeek = 0
+
+        for offset in 1...365 {
+            guard let day = calendar.date(byAdding: .day, value: -offset, to: today) else { break }
+            let key = formatter.string(from: day)
+            let (year, week) = calendar.isoWeekAndYear(from: day)
+            let weekKey = "\(year)-W\(String(format: "%02d", week))"
+
+            let daySessions = dailySessions[key] ?? []
+            let complete = habitIDs.isSubset(of: daySessions)
+
+            if complete {
+                streak += 1
+            } else {
+                let used = leewayUsed[weekKey] ?? 0
+                if used < leeway {
+                    leewayUsed[weekKey] = used + 1
+                    streak += 1
+                } else {
+                    break
+                }
+            }
+
+            // Track leeway for current ISO week
+            let (todayYear, todayWeek) = calendar.isoWeekAndYear(from: today)
+            if year == todayYear && week == todayWeek {
+                leewayUsedThisWeek = leewayUsed[weekKey] ?? 0
+            }
+        }
+
+        let remaining = max(0, leeway - leewayUsedThisWeek)
+        return StreakResult(currentStreak: streak, leewayUsedWeek: leewayUsedThisWeek, leewayRemaining: remaining, leewayPerWeek: leeway)
+    }
+
     func sessionsWithHabits() -> [SessionWithHabit] {
         let habitLookup = Dictionary(uniqueKeysWithValues: habits.map { ($0.id, $0) })
         return sessions.map { session in
@@ -326,5 +384,14 @@ class DataService {
         // Try without fractional seconds
         f.formatOptions = [.withInternetDateTime]
         return f.date(from: str) ?? Date()
+    }
+}
+
+// MARK: - Calendar helpers
+
+private extension Calendar {
+    func isoWeekAndYear(from date: Date) -> (Int, Int) {
+        let components = self.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+        return (components.yearForWeekOfYear ?? 0, components.weekOfYear ?? 0)
     }
 }

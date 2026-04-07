@@ -22,6 +22,10 @@ struct ContentView: View {
             LogView(dataService: dataService)
                 .tabItem { Label("Log", systemImage: "clock.arrow.circlepath") }
                 .tag(3)
+
+            SettingsView()
+                .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tag(4)
         }
         .tint(Theme.accent)
         .task {

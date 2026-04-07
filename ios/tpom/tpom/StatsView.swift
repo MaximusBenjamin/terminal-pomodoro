@@ -2,6 +2,7 @@ import SwiftUI
 
 struct StatsView: View {
     var dataService: DataService
+    @State private var leeway = AppSettings.leewayDaysPerWeek
 
     var body: some View {
         ZStack {
@@ -31,6 +32,10 @@ struct StatsView: View {
                         allTime: dataService.allTimeHours()
                     )
                     .padding(.horizontal)
+
+                    // Streak card
+                    StreakCard(streak: dataService.calculateStreak(leeway: AppSettings.leewayDaysPerWeek))
+                        .padding(.horizontal)
 
                     // Today by habit
                     let todayHabits = dataService.todayByHabit()
