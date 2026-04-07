@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-// Settings holds user preferences stored locally.
+// Settings holds user preferences cached locally.
 type Settings struct {
 	LeewayDaysPerWeek int `json:"leeway_days_per_week"`
 }
@@ -24,7 +24,7 @@ func filePath() (string, error) {
 	return filepath.Join(dir, "settings.json"), nil
 }
 
-// Load reads settings from disk, returning defaults if the file doesn't exist.
+// Load reads settings from the local cache file.
 func Load() (Settings, error) {
 	path, err := filePath()
 	if err != nil {
@@ -44,7 +44,7 @@ func Load() (Settings, error) {
 	return s, nil
 }
 
-// Save writes settings to disk.
+// Save writes settings to the local cache file.
 func Save(s Settings) error {
 	path, err := filePath()
 	if err != nil {

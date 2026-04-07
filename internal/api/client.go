@@ -681,3 +681,32 @@ func (c *Client) HabitBreakdownForPeriod(days int) ([]HabitBreakdown, error) {
 
 	return result, nil
 }
+
+// GetLeeway fetches the leeway_days_per_week setting from Supabase.
+func (c *Client) GetLeeway() (int, error) {
+	data, err := c.doRequest("GET", "/rest/v1/user_settings?select=leeway_days_per_week", nil, map[string]string{
+		"Accept": "application/vnd.pgrst.object+json",
+	})
+	if err != nil {
+		return 0, err
+	}
+	var row struct {
+		Leeway int `json:"leeway_days_per_week"`
+	}
+	if err := json.Unmarshal(data, &row); err != nil {
+		return 0, err
+	}
+	return row.Leeway, nil
+}
+
+// SetLeeway upserts the leeway_days_per_week setting in Supabase.
+func (c *Client) SetLeeway(leeway int) error {
+	body := map[string]interface{}{
+		"leeway_days_per_week": leeway,
+		"updated_at":           time.Now().UTC().Format(time.RFC3339),
+	}
+	_, err := c.doRequest("POST", "/rest/v1/user_settings", body, map[string]string{
+		"Prefer": "resolution=merge-duplicates",
+	})
+	return err
+}

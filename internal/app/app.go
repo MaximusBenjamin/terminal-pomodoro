@@ -34,7 +34,7 @@ type Model struct {
 func New(c *api.Client) Model {
 	h := habits.New(c)
 	t := timer.New(c)
-	se := settings.New()
+	se := settings.New(c)
 	st := stats.New(c, se.Leeway())
 	l := logview.New(c)
 
@@ -132,6 +132,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeTab = (m.activeTab + numTabs - 1) % numTabs
 			return m, m.refreshTab()
 		}
+
+	case settings.LeewayLoadedMsg:
+		// Leeway loaded from Supabase on startup — update settings model then reload stats
+		var settingsCmd tea.Cmd
+		m.settings, settingsCmd = m.settings.Update(msg)
+		m.stats.SetLeeway(m.settings.Leeway())
+		var statsCmd tea.Cmd
+		m.stats, statsCmd = m.stats.Update(common.StatsRefreshMsg{})
+		return m, tea.Batch(settingsCmd, statsCmd)
 
 	case common.HabitSelectedMsg:
 		m.timer.RefreshHabits()

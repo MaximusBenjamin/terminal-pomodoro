@@ -131,8 +131,9 @@ enum WidgetAPIClient {
             }
             habitDays[session.habitId]![dayIndex] += Double(session.actualSeconds) / 3600.0
         }
-        let weekByHabit = habitDays.compactMap { habitId, daily -> HabitWeek? in
-            guard let habit = habitLookup[habitId] else { return nil }
+        // Include ALL habits, even those with no sessions this week
+        let weekByHabit = habits.map { habit -> HabitWeek in
+            let daily = habitDays[habit.id] ?? Array(repeating: 0.0, count: 7)
             return HabitWeek(habitName: habit.name, color: habit.color, daily: daily)
         }.sorted { $0.habitName < $1.habitName }
 

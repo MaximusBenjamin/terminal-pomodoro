@@ -23,7 +23,7 @@ struct ContentView: View {
                 .tabItem { Label("Log", systemImage: "clock.arrow.circlepath") }
                 .tag(3)
 
-            SettingsView()
+            SettingsView(dataService: dataService)
                 .tabItem { Label("Settings", systemImage: "gearshape") }
                 .tag(4)
         }

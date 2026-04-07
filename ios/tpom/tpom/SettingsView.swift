@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    var dataService: DataService
     @State private var leeway = AppSettings.leewayDaysPerWeek
 
     var body: some View {
@@ -34,7 +35,7 @@ struct SettingsView: View {
                             Button {
                                 if leeway > 0 {
                                     leeway -= 1
-                                    AppSettings.leewayDaysPerWeek = leeway
+                                    Task { await dataService.saveLeeway(leeway) }
                                 }
                             } label: {
                                 Image(systemName: "minus.circle")
@@ -51,7 +52,7 @@ struct SettingsView: View {
                             Button {
                                 if leeway < 7 {
                                     leeway += 1
-                                    AppSettings.leewayDaysPerWeek = leeway
+                                    Task { await dataService.saveLeeway(leeway) }
                                 }
                             } label: {
                                 Image(systemName: "plus.circle")
@@ -77,6 +78,7 @@ struct SettingsView: View {
                 Spacer()
             }
         }
+        .onAppear { leeway = AppSettings.leewayDaysPerWeek }
     }
 
     private var leewayDescription: String {

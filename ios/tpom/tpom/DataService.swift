@@ -42,8 +42,40 @@ class DataService {
         isLoading = true
         await fetchHabits()
         await fetchSessions()
+        await fetchLeeway()
         isLoading = false
         writeWidgetSnapshot()
+    }
+
+    func fetchLeeway() async {
+        do {
+            struct Row: Decodable { let leeway_days_per_week: Int }
+            let row: Row = try await supabase.from("user_settings")
+                .select("leeway_days_per_week")
+                .single()
+                .execute()
+                .value
+            AppSettings.leewayDaysPerWeek = row.leeway_days_per_week
+        } catch {
+            // Non-fatal: keep existing value
+        }
+    }
+
+    func saveLeeway(_ leeway: Int) async {
+        AppSettings.leewayDaysPerWeek = leeway
+        do {
+            struct Body: Encodable {
+                let leeway_days_per_week: Int
+                let updated_at: String
+            }
+            let formatter = ISO8601DateFormatter()
+            let body = Body(leeway_days_per_week: leeway, updated_at: formatter.string(from: Date()))
+            try await supabase.from("user_settings")
+                .upsert(body)
+                .execute()
+        } catch {
+            // Non-fatal: local value already updated
+        }
     }
 
     // MARK: - Habits
@@ -255,8 +287,9 @@ class DataService {
             habitDays[session.habitId]![dayIndex] += Double(session.actualSeconds) / 3600.0
         }
 
-        return habitDays.compactMap { habitId, daily in
-            guard let habit = habitLookup[habitId] else { return nil }
+        // Include ALL habits, even those with no sessions this week
+        return habits.map { habit in
+            let daily = habitDays[habit.id] ?? Array(repeating: 0.0, count: 7)
             return HabitWeek(habitName: habit.name, color: habit.color, daily: daily)
         }.sorted { $0.habitName < $1.habitName }
     }
