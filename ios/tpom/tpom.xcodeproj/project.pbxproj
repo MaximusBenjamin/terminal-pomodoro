@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		125C4535B648BE8A5C052AF0 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508B96C7D83BE60463680520 /* Theme.swift */; };
 		180BEE06D06F940799818328 /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050DA365B794B019D01A868F /* SupabaseClient.swift */; };
+		27BD45AA45231AC93FB6D6DF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3976F0DC2E3E48A5D00B9DD9 /* SettingsView.swift */; };
 		295DAE38EEEF92E46B713A0F /* tpomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7A860BFE5EDAB4CDD1CBF7 /* tpomApp.swift */; };
 		3BC8923E02961C725C97C2A6 /* SummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5387384AA19E66119477FD2B /* SummaryCard.swift */; };
 		3D1243416404BD8D67F509CD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2EDFFF22E955DB37AB3FB2 /* ContentView.swift */; };
@@ -29,6 +30,7 @@
 		CC635DEC77F3E27B0BAEFA09 /* WidgetAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15457C4F1BE00B3A8149B3A5 /* WidgetAPIClient.swift */; };
 		CD3129FC2AEDF90586232A96 /* HeatmapWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13CB9F30605F4B10CF7ECF69 /* HeatmapWidget.swift */; };
 		D90A45C3A720EC0555C38CF9 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBCB6DB5C15DC634820E80B /* Models.swift */; };
+		DBC9280F54957A3AB80E4685 /* StreakCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1887338EC42D50C872B5 /* StreakCard.swift */; };
 		E7ED8C8DBC198D6D81778011 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508B96C7D83BE60463680520 /* Theme.swift */; };
 		E9574F77829201AAA6C80E51 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FAB94349C4A92DE0CEAFA4 /* DataService.swift */; };
 		F3FB39145F2631E43EBCEC1C /* SessionFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 756AE8CB9F0FAD005F1A8391 /* SessionFormView.swift */; };
@@ -69,6 +71,7 @@
 		15457C4F1BE00B3A8149B3A5 /* WidgetAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetAPIClient.swift; sourceTree = "<group>"; };
 		2EBCB6DB5C15DC634820E80B /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		36B7EF1746362D847F44FD14 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+		3976F0DC2E3E48A5D00B9DD9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		41EC06A008724E0666348668 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		494E189092D4E1A5538B75D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		499C7407A60E555D92A482F4 /* SummaryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryWidget.swift; sourceTree = "<group>"; };
@@ -84,6 +87,7 @@
 		756AE8CB9F0FAD005F1A8391 /* SessionFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionFormView.swift; sourceTree = "<group>"; };
 		8086A8A16DC8532C8DA11B16 /* WeeklyChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyChartView.swift; sourceTree = "<group>"; };
 		83FAB94349C4A92DE0CEAFA4 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		8ADA1887338EC42D50C872B5 /* StreakCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCard.swift; sourceTree = "<group>"; };
 		905C43054FEE33EC1DED96E2 /* WidgetDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataStore.swift; sourceTree = "<group>"; };
 		9BB3D490F80440277F358ED6 /* WeeklyChartWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyChartWidget.swift; sourceTree = "<group>"; };
 		A5F98232A6376ADBDC6A6B9E /* tpomWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tpomWidgets.swift; sourceTree = "<group>"; };
@@ -116,7 +120,9 @@
 				63588C2E513B1A249B8AC7A1 /* HeatmapView.swift */,
 				36B7EF1746362D847F44FD14 /* LogView.swift */,
 				756AE8CB9F0FAD005F1A8391 /* SessionFormView.swift */,
+				3976F0DC2E3E48A5D00B9DD9 /* SettingsView.swift */,
 				C17B399A8FDF12CE32DFC4D1 /* StatsView.swift */,
+				8ADA1887338EC42D50C872B5 /* StreakCard.swift */,
 				5387384AA19E66119477FD2B /* SummaryCard.swift */,
 				050DA365B794B019D01A868F /* SupabaseClient.swift */,
 				41EC06A008724E0666348668 /* TimerView.swift */,
@@ -277,7 +283,9 @@
 				F6E71E940627C56A00262BEB /* LogView.swift in Sources */,
 				D90A45C3A720EC0555C38CF9 /* Models.swift in Sources */,
 				F3FB39145F2631E43EBCEC1C /* SessionFormView.swift in Sources */,
+				27BD45AA45231AC93FB6D6DF /* SettingsView.swift in Sources */,
 				949A2C8EBF6AC9D3E5FAE9D0 /* StatsView.swift in Sources */,
+				DBC9280F54957A3AB80E4685 /* StreakCard.swift in Sources */,
 				3BC8923E02961C725C97C2A6 /* SummaryCard.swift in Sources */,
 				180BEE06D06F940799818328 /* SupabaseClient.swift in Sources */,
 				125C4535B648BE8A5C052AF0 /* Theme.swift in Sources */,
