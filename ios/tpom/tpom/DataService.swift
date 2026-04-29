@@ -251,6 +251,7 @@ class DataService {
 
         let sessionChanges = channel.postgresChange(AnyAction.self, table: "sessions")
         let habitChanges = channel.postgresChange(AnyAction.self, table: "habits")
+        let todoChanges = channel.postgresChange(AnyAction.self, table: "todos")
 
         await channel.subscribe()
 
@@ -266,6 +267,11 @@ class DataService {
                     for await _ in habitChanges {
                         await self.fetchHabits()
                         self.writeWidgetSnapshot()
+                    }
+                }
+                group.addTask {
+                    for await _ in todoChanges {
+                        await self.loadTodos(for: self.viewingTodoDate)
                     }
                 }
             }
