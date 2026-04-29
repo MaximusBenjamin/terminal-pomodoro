@@ -11,21 +11,25 @@ struct ContentView: View {
                 .tabItem { Label("Timer", systemImage: "timer") }
                 .tag(0)
 
+            TodoView(dataService: dataService)
+                .tabItem { Label("Todo", systemImage: "checklist") }
+                .tag(1)
+
             StatsView(dataService: dataService)
                 .tabItem { Label("Stats", systemImage: "chart.bar") }
-                .tag(1)
+                .tag(2)
 
             HabitsListView(dataService: dataService)
                 .tabItem { Label("Habits", systemImage: "list.bullet") }
-                .tag(2)
+                .tag(3)
 
             LogView(dataService: dataService)
                 .tabItem { Label("Log", systemImage: "clock.arrow.circlepath") }
-                .tag(3)
+                .tag(4)
 
             SettingsView(dataService: dataService)
                 .tabItem { Label("Settings", systemImage: "gearshape") }
-                .tag(4)
+                .tag(5)
         }
         .tint(Theme.accent)
         .task {
@@ -36,6 +40,11 @@ struct ContentView: View {
             Task {
                 if newPhase == .active {
                     await dataService.fetchAll()
+                    // If the app was suspended across the 4 AM boundary,
+                    // returning to active should snap the Todo view back to today.
+                    if !dataService.isTodoViewingToday && Calendar.current.isDateInToday(dataService.viewingTodoDate) == false {
+                        await dataService.loadTodos(for: dataService.effectiveDay())
+                    }
                     await dataService.startRealtime()
                 } else if newPhase == .background {
                     dataService.stopRealtime()
