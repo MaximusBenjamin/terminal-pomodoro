@@ -180,15 +180,12 @@ func (m Model) updateNormal(msg tea.KeyMsg) (Model, tea.Cmd) {
 			t := m.todos[m.cursor]
 			newCompleted := !t.Completed
 			id := t.ID
-			return m, tea.Batch(
-				func() tea.Msg {
-					if err := m.client.ToggleTodo(id, newCompleted); err != nil {
-						return todosLoadedMsg{todos: m.todos, err: "Failed to toggle"}
-					}
-					return nil
-				},
-				m.loadTodos,
-			)
+			return m, func() tea.Msg {
+				if err := m.client.ToggleTodo(id, newCompleted); err != nil {
+					return todosLoadedMsg{todos: m.todos, err: "Failed to toggle"}
+				}
+				return m.loadTodos()
+			}
 		}
 		return m, nil
 
@@ -227,28 +224,22 @@ func (m Model) updateInput(msg tea.KeyMsg, isEdit bool) (Model, tea.Cmd) {
 			m.mode = modeNormal
 			m.input.Reset()
 			m.input.Blur()
-			return m, tea.Batch(
-				func() tea.Msg {
-					if err := m.client.EditTodo(id, text); err != nil {
-						return todosLoadedMsg{todos: m.todos, err: "Failed to edit"}
-					}
-					return nil
-				},
-				m.loadTodos,
-			)
+			return m, func() tea.Msg {
+				if err := m.client.EditTodo(id, text); err != nil {
+					return todosLoadedMsg{todos: m.todos, err: "Failed to edit"}
+				}
+				return m.loadTodos()
+			}
 		}
 		m.mode = modeNormal
 		m.input.Reset()
 		m.input.Blur()
-		return m, tea.Batch(
-			func() tea.Msg {
-				if _, err := m.client.AddTodo(text); err != nil {
-					return todosLoadedMsg{todos: m.todos, err: "Failed to add"}
-				}
-				return nil
-			},
-			m.loadTodos,
-		)
+		return m, func() tea.Msg {
+			if _, err := m.client.AddTodo(text); err != nil {
+				return todosLoadedMsg{todos: m.todos, err: "Failed to add"}
+			}
+			return m.loadTodos()
+		}
 
 	case "esc":
 		m.mode = modeNormal
@@ -268,15 +259,12 @@ func (m Model) updateConfirmDelete(msg tea.KeyMsg) (Model, tea.Cmd) {
 		if len(m.todos) > 0 {
 			id := m.todos[m.cursor].ID
 			m.mode = modeNormal
-			return m, tea.Batch(
-				func() tea.Msg {
-					if err := m.client.DeleteTodo(id); err != nil {
-						return todosLoadedMsg{todos: m.todos, err: "Failed to delete"}
-					}
-					return nil
-				},
-				m.loadTodos,
-			)
+			return m, func() tea.Msg {
+				if err := m.client.DeleteTodo(id); err != nil {
+					return todosLoadedMsg{todos: m.todos, err: "Failed to delete"}
+				}
+				return m.loadTodos()
+			}
 		}
 		m.mode = modeNormal
 		return m, nil
