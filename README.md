@@ -15,6 +15,7 @@ A minimalist pomodoro timer for the terminal, built with Go. Lazygit-style TUI w
 ## Features
 
 - **Timer** - Countdown with adjustable duration, pause/resume, overtime tracking
+- **Todo** - Daily plain-text todo list that resets at the 4 AM day boundary; past days are kept and navigable read-only
 - **Habits** - Track time across categories (programming, mathematics, finance, etc.)
 - **Stats** - Year-long heatmap, weekly per-category bar chart, today/week/all-time totals
 - **Log** - View, add, edit, and delete sessions with natural language input
@@ -76,6 +77,20 @@ tpom logout
 | `r` | Reset (prompts save/discard) |
 | `j` / `k` | Cycle habit |
 | `+` / `-` | Adjust time by 5 min |
+
+### Todo
+
+| Key | Action |
+|-----|--------|
+| `j` / `k` | Navigate |
+| `a` | Add todo |
+| `space` | Toggle done |
+| `e` | Edit todo |
+| `d` | Delete todo (asks to confirm) |
+| `←` / `→` | Previous / next day |
+| `0` | Today |
+
+Past days are read-only.
 
 ### Stats
 
