@@ -40,11 +40,6 @@ struct ContentView: View {
             Task {
                 if newPhase == .active {
                     await dataService.fetchAll()
-                    // If the app was suspended across the 4 AM boundary,
-                    // returning to active should snap the Todo view back to today.
-                    if !dataService.isTodoViewingToday && Calendar.current.isDateInToday(dataService.viewingTodoDate) == false {
-                        await dataService.loadTodos(for: dataService.effectiveDay())
-                    }
                     await dataService.startRealtime()
                 } else if newPhase == .background {
                     dataService.stopRealtime()
