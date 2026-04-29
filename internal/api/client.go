@@ -710,3 +710,109 @@ func (c *Client) SetLeeway(leeway int) error {
 	})
 	return err
 }
+
+// --- Todo types and methods ---
+
+type apiTodo struct {
+	ID            int        `json:"id"`
+	Text          string     `json:"text"`
+	Completed     bool       `json:"completed"`
+	EffectiveDate string     `json:"effective_date"` // YYYY-MM-DD
+	CreatedAt     time.Time  `json:"created_at"`
+	CompletedAt   *time.Time `json:"completed_at,omitempty"`
+}
+
+func (a apiTodo) toCommon() (common.Todo, error) {
+	day, err := time.ParseInLocation("2006-01-02", a.EffectiveDate, time.Local)
+	if err != nil {
+		return common.Todo{}, fmt.Errorf("parsing effective_date %q: %w", a.EffectiveDate, err)
+	}
+	return common.Todo{
+		ID:            a.ID,
+		Text:          a.Text,
+		Completed:     a.Completed,
+		EffectiveDate: day,
+		CreatedAt:     a.CreatedAt,
+		CompletedAt:   a.CompletedAt,
+	}, nil
+}
+
+// ListTodos returns the user's todos for the given effective date (a date-only
+// time.Time, typically from EffectiveDate(time.Now())).
+func (c *Client) ListTodos(date time.Time) ([]common.Todo, error) {
+	dateStr := date.Format("2006-01-02")
+	path := fmt.Sprintf("/rest/v1/todos?effective_date=eq.%s&order=created_at.asc", dateStr)
+	data, err := c.doRequest("GET", path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var rows []apiTodo
+	if err := json.Unmarshal(data, &rows); err != nil {
+		return nil, fmt.Errorf("decoding todos: %w", err)
+	}
+
+	todos := make([]common.Todo, 0, len(rows))
+	for _, r := range rows {
+		t, err := r.toCommon()
+		if err != nil {
+			return nil, err
+		}
+		todos = append(todos, t)
+	}
+	return todos, nil
+}
+
+// AddTodo creates a new todo for today's effective date and returns the created row.
+func (c *Client) AddTodo(text string) (common.Todo, error) {
+	today := EffectiveDate(time.Now().Local())
+	body := map[string]interface{}{
+		"text":           text,
+		"effective_date": today.Format("2006-01-02"),
+	}
+	headers := map[string]string{"Prefer": "return=representation"}
+	data, err := c.doRequest("POST", "/rest/v1/todos", body, headers)
+	if err != nil {
+		return common.Todo{}, err
+	}
+
+	var rows []apiTodo
+	if err := json.Unmarshal(data, &rows); err != nil {
+		return common.Todo{}, fmt.Errorf("decoding created todo: %w", err)
+	}
+	if len(rows) == 0 {
+		return common.Todo{}, fmt.Errorf("no todo returned after insert")
+	}
+	return rows[0].toCommon()
+}
+
+// ToggleTodo flips a todo's completed state. When marking complete it sets
+// completed_at = now(); when un-marking it clears completed_at.
+func (c *Client) ToggleTodo(id int, completed bool) error {
+	body := map[string]interface{}{
+		"completed": completed,
+	}
+	if completed {
+		body["completed_at"] = time.Now().UTC().Format(time.RFC3339)
+	} else {
+		body["completed_at"] = nil
+	}
+	path := fmt.Sprintf("/rest/v1/todos?id=eq.%d", id)
+	_, err := c.doRequest("PATCH", path, body, nil)
+	return err
+}
+
+// EditTodo replaces a todo's text.
+func (c *Client) EditTodo(id int, text string) error {
+	body := map[string]interface{}{"text": text}
+	path := fmt.Sprintf("/rest/v1/todos?id=eq.%d", id)
+	_, err := c.doRequest("PATCH", path, body, nil)
+	return err
+}
+
+// DeleteTodo removes a todo permanently.
+func (c *Client) DeleteTodo(id int) error {
+	path := fmt.Sprintf("/rest/v1/todos?id=eq.%d", id)
+	_, err := c.doRequest("DELETE", path, nil, nil)
+	return err
+}
