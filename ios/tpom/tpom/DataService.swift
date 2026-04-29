@@ -7,9 +7,15 @@ import WidgetKit
 class DataService {
     var habits: [Habit] = []
     var sessions: [Session] = []
+    var todos: [Todo] = []
+    var viewingTodoDate: Date = Date()
     var isLoading = false
     var error: String?
     private var realtimeTask: Task<Void, Never>?
+
+    init() {
+        self.viewingTodoDate = Calendar.current.date(from: effectiveDate(Date())) ?? Date()
+    }
 
     // MARK: - Fetch
 
@@ -43,6 +49,7 @@ class DataService {
         await fetchHabits()
         await fetchSessions()
         await fetchLeeway()
+        await loadTodos(for: effectiveDay())
         isLoading = false
         writeWidgetSnapshot()
     }
@@ -143,6 +150,95 @@ class DataService {
         } catch {
             self.error = friendlyError(error)
         }
+    }
+
+    // MARK: - Todos
+
+    func loadTodos(for date: Date) async {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = .current
+        let dateStr = formatter.string(from: date)
+        do {
+            todos = try await supabase.from("todos")
+                .select()
+                .eq("effective_date", value: dateStr)
+                .order("created_at", ascending: true)
+                .execute()
+                .value
+            viewingTodoDate = date
+        } catch {
+            self.error = friendlyError(error)
+        }
+    }
+
+    func addTodo(text: String) async {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = .current
+        let today = effectiveDay()
+        let body = NewTodo(text: text, effectiveDate: formatter.string(from: today))
+        do {
+            try await supabase.from("todos")
+                .insert(body)
+                .execute()
+            await loadTodos(for: effectiveDay())
+        } catch {
+            self.error = friendlyError(error)
+        }
+    }
+
+    func toggleTodo(id: Int, completed: Bool) async {
+        struct Patch: Encodable {
+            let completed: Bool
+            let completed_at: String?
+        }
+        let isoF = ISO8601DateFormatter()
+        isoF.formatOptions = [.withInternetDateTime]
+        let patch = Patch(
+            completed: completed,
+            completed_at: completed ? isoF.string(from: Date()) : nil
+        )
+        do {
+            try await supabase.from("todos")
+                .update(patch)
+                .eq("id", value: id)
+                .execute()
+            await loadTodos(for: viewingTodoDate)
+        } catch {
+            self.error = friendlyError(error)
+        }
+    }
+
+    func editTodo(id: Int, text: String) async {
+        struct Patch: Encodable { let text: String }
+        do {
+            try await supabase.from("todos")
+                .update(Patch(text: text))
+                .eq("id", value: id)
+                .execute()
+            await loadTodos(for: viewingTodoDate)
+        } catch {
+            self.error = friendlyError(error)
+        }
+    }
+
+    func deleteTodo(id: Int) async {
+        do {
+            try await supabase.from("todos")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            await loadTodos(for: viewingTodoDate)
+        } catch {
+            self.error = friendlyError(error)
+        }
+    }
+
+    /// Whether the currently-viewed Todo day is today (and thus editable).
+    var isTodoViewingToday: Bool {
+        let today = effectiveDay()
+        return Calendar.current.isDate(viewingTodoDate, inSameDayAs: today)
     }
 
     // MARK: - Realtime
@@ -398,6 +494,7 @@ class DataService {
     func clearData() {
         habits = []
         sessions = []
+        todos = []
         error = nil
         stopRealtime()
         WidgetDataStore.clear()
@@ -408,6 +505,13 @@ class DataService {
     private func effectiveDate(_ date: Date) -> DateComponents {
         let shifted = Calendar.current.date(byAdding: .hour, value: -4, to: date)!
         return Calendar.current.dateComponents([.year, .month, .day], from: shifted)
+    }
+
+    /// Returns the effective day for `date` as a Date at midnight local time.
+    /// Used by the Todo view to filter rows by `effective_date`.
+    func effectiveDay(_ date: Date = Date()) -> Date {
+        let comp = effectiveDate(date)
+        return Calendar.current.date(from: comp) ?? date
     }
 
     private func parseDate(_ str: String) -> Date {
