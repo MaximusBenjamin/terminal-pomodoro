@@ -12,9 +12,10 @@ import (
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/settings"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/stats"
 	"github.com/MaximusBenjamin/terminal-pomodoro/internal/timer"
+	"github.com/MaximusBenjamin/terminal-pomodoro/internal/todo"
 )
 
-const numTabs = 5
+const numTabs = 6
 
 // Model is the top-level Bubble Tea model that orchestrates all views.
 type Model struct {
@@ -24,6 +25,7 @@ type Model struct {
 	habits    habits.Model
 	log       logview.Model
 	settings  settings.Model
+	todo      todo.Model
 	client    *api.Client
 	width     int
 	height    int
@@ -37,6 +39,7 @@ func New(c *api.Client) Model {
 	se := settings.New(c)
 	st := stats.New(c, se.Leeway())
 	l := logview.New(c)
+	td := todo.New(c)
 
 	// Set the first habit as the default for the timer.
 	sel := h.SelectedHabit()
@@ -51,6 +54,7 @@ func New(c *api.Client) Model {
 		habits:    h,
 		log:       l,
 		settings:  se,
+		todo:      td,
 		client:    c,
 	}
 }
@@ -63,6 +67,7 @@ func (m Model) Init() tea.Cmd {
 		m.habits.Init(),
 		m.log.Init(),
 		m.settings.Init(),
+		m.todo.Init(),
 	)
 }
 
@@ -92,6 +97,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, cmd)
 		m.settings, cmd = m.settings.Update(inner)
 		cmds = append(cmds, cmd)
+		m.todo, cmd = m.todo.Update(inner)
+		cmds = append(cmds, cmd)
 
 		return m, tea.Batch(cmds...)
 
@@ -107,6 +114,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.activeTab == common.LogTab && m.log.IsEditing() {
 				break
 			}
+			if m.activeTab == common.TodoTab && (m.todo.IsEditing() || m.todo.IsConfirming()) {
+				break
+			}
 			if m.timer.IsConfirming() {
 				break
 			}
@@ -119,6 +129,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.activeTab == common.LogTab && m.log.IsEditing() {
 				break
 			}
+			if m.activeTab == common.TodoTab && (m.todo.IsEditing() || m.todo.IsConfirming()) {
+				break
+			}
 			m.activeTab = (m.activeTab + 1) % numTabs
 			return m, m.refreshTab()
 
@@ -127,6 +140,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				break
 			}
 			if m.activeTab == common.LogTab && m.log.IsEditing() {
+				break
+			}
+			if m.activeTab == common.TodoTab && (m.todo.IsEditing() || m.todo.IsConfirming()) {
 				break
 			}
 			m.activeTab = (m.activeTab + numTabs - 1) % numTabs
@@ -190,6 +206,8 @@ func (m Model) refreshTab() tea.Cmd {
 		return func() tea.Msg { return common.LogRefreshMsg{} }
 	case common.StatsTab:
 		return func() tea.Msg { return common.StatsRefreshMsg{} }
+	case common.TodoTab:
+		return func() tea.Msg { return common.TodoRefreshMsg{} }
 	}
 	return nil
 }
@@ -199,6 +217,8 @@ func (m Model) updateActiveTab(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch m.activeTab {
 	case common.TimerTab:
 		m.timer, cmd = m.timer.Update(msg)
+	case common.TodoTab:
+		m.todo, cmd = m.todo.Update(msg)
 	case common.StatsTab:
 		m.stats, cmd = m.stats.Update(msg)
 	case common.HabitsTab:
@@ -233,6 +253,8 @@ func (m Model) updateAll(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmds = append(cmds, cmd)
 	m.settings, cmd = m.settings.Update(msg)
 	cmds = append(cmds, cmd)
+	m.todo, cmd = m.todo.Update(msg)
+	cmds = append(cmds, cmd)
 
 	return m, tea.Batch(cmds...)
 }
@@ -249,6 +271,7 @@ func (m Model) View() string {
 		tab   common.Tab
 	}{
 		{"Timer", common.TimerTab},
+		{"Todo", common.TodoTab},
 		{"Stats", common.StatsTab},
 		{"Habits", common.HabitsTab},
 		{"Log", common.LogTab},
@@ -276,6 +299,8 @@ func (m Model) View() string {
 	switch m.activeTab {
 	case common.TimerTab:
 		content = m.timer.View()
+	case common.TodoTab:
+		content = m.todo.View()
 	case common.StatsTab:
 		content = m.stats.View()
 	case common.HabitsTab:
