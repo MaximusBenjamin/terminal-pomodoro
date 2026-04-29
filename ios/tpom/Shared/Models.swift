@@ -64,6 +64,37 @@ struct NewSession: Codable {
     }
 }
 
+// MARK: - Todo
+
+struct Todo: Codable, Identifiable, Equatable {
+    let id: Int
+    let userId: UUID?
+    let text: String
+    let completed: Bool
+    let effectiveDate: String   // YYYY-MM-DD
+    let createdAt: String?
+    let completedAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case text, completed
+        case effectiveDate = "effective_date"
+        case createdAt = "created_at"
+        case completedAt = "completed_at"
+    }
+}
+
+struct NewTodo: Codable {
+    let text: String
+    let effectiveDate: String  // YYYY-MM-DD
+
+    enum CodingKeys: String, CodingKey {
+        case text
+        case effectiveDate = "effective_date"
+    }
+}
+
 // For session list display (joined with habit)
 struct SessionWithHabit: Identifiable {
     let session: Session

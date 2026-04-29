@@ -91,9 +91,9 @@
 		905C43054FEE33EC1DED96E2 /* WidgetDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataStore.swift; sourceTree = "<group>"; };
 		9BB3D490F80440277F358ED6 /* WeeklyChartWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyChartWidget.swift; sourceTree = "<group>"; };
 		A5F98232A6376ADBDC6A6B9E /* tpomWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tpomWidgets.swift; sourceTree = "<group>"; };
-		B598CDC75706907A24181EFA /* tpom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tpom.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B598CDC75706907A24181EFA /* tpom.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = tpom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C17B399A8FDF12CE32DFC4D1 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
-		E44763E712B274DF11411538 /* tpomWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = tpomWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E44763E712B274DF11411538 /* tpomWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = tpomWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0521C26BB9CCBA98288E3AA /* tpom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tpom.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -451,7 +451,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CT73T9Z8H3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = tpom;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -474,7 +473,6 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = tpomWidgets/tpomWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = CT73T9Z8H3;
 				INFOPLIST_FILE = tpomWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -496,7 +494,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CT73T9Z8H3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = tpom;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -519,7 +516,6 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = tpomWidgets/tpomWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = CT73T9Z8H3;
 				INFOPLIST_FILE = tpomWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
