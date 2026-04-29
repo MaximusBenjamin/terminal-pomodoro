@@ -26,6 +26,7 @@
 		949A2C8EBF6AC9D3E5FAE9D0 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17B399A8FDF12CE32DFC4D1 /* StatsView.swift */; };
 		99F065EF162F13CEF427E7E0 /* WeeklyHabitWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5907ACC9148C60D51AF6C5F3 /* WeeklyHabitWidget.swift */; };
 		A36D3DC19DD307C5B27E36AF /* WeeklyChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086A8A16DC8532C8DA11B16 /* WeeklyChartView.swift */; };
+		ABCE4158243FC72BE43AB265 /* TodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E381BF8393D5BA0C2A6DC86 /* TodoView.swift */; };
 		B57AC81CD384653EA0F98071 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EC06A008724E0666348668 /* TimerView.swift */; };
 		CC635DEC77F3E27B0BAEFA09 /* WidgetAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15457C4F1BE00B3A8149B3A5 /* WidgetAPIClient.swift */; };
 		CD3129FC2AEDF90586232A96 /* HeatmapWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13CB9F30605F4B10CF7ECF69 /* HeatmapWidget.swift */; };
@@ -79,6 +80,7 @@
 		5387384AA19E66119477FD2B /* SummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCard.swift; sourceTree = "<group>"; };
 		5907ACC9148C60D51AF6C5F3 /* WeeklyHabitWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyHabitWidget.swift; sourceTree = "<group>"; };
 		5B7A860BFE5EDAB4CDD1CBF7 /* tpomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tpomApp.swift; sourceTree = "<group>"; };
+		5E381BF8393D5BA0C2A6DC86 /* TodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoView.swift; sourceTree = "<group>"; };
 		5F2EDFFF22E955DB37AB3FB2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		63588C2E513B1A249B8AC7A1 /* HeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapView.swift; sourceTree = "<group>"; };
 		66CFE4C383C0C46884D934F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				5387384AA19E66119477FD2B /* SummaryCard.swift */,
 				050DA365B794B019D01A868F /* SupabaseClient.swift */,
 				41EC06A008724E0666348668 /* TimerView.swift */,
+				5E381BF8393D5BA0C2A6DC86 /* TodoView.swift */,
 				F0521C26BB9CCBA98288E3AA /* tpom.entitlements */,
 				5B7A860BFE5EDAB4CDD1CBF7 /* tpomApp.swift */,
 				8086A8A16DC8532C8DA11B16 /* WeeklyChartView.swift */,
@@ -290,6 +293,7 @@
 				180BEE06D06F940799818328 /* SupabaseClient.swift in Sources */,
 				125C4535B648BE8A5C052AF0 /* Theme.swift in Sources */,
 				B57AC81CD384653EA0F98071 /* TimerView.swift in Sources */,
+				ABCE4158243FC72BE43AB265 /* TodoView.swift in Sources */,
 				A36D3DC19DD307C5B27E36AF /* WeeklyChartView.swift in Sources */,
 				5574A962C443D614E7ABFDD6 /* WidgetAPIClient.swift in Sources */,
 				74722EE307F39220171DF804 /* WidgetDataStore.swift in Sources */,
